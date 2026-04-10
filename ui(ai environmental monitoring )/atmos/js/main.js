@@ -227,6 +227,13 @@ document.querySelectorAll('.summary-bar').forEach(el => sumObs.observe(el));
 // ── SIMULATED LIVE AQI UPDATE ──
 const aqiValues = document.querySelectorAll('.aqi-value');
 if (aqiValues.length) {
+  setInterval(() => {
+    aqiValues.forEach(el => {
+      const current = parseInt(el.textContent.replace(/[^0-9]/g, ''));
+      const drift = Math.floor(Math.random() * 7) - 3;
+      const updated = Math.max(20, current + drift);
+      el.textContent = 'AQI ' + updated;
+    });
   }, 4000);
 }
 

@@ -48,9 +48,9 @@
 /* Text styles — white on video */
 .seq-badge {
   display:inline-flex; align-items:center; gap:6px;
-  background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2);
+  background:var(--glass); border:1px solid var(--glass-border);
   border-radius:100px; padding:5px 14px; font-size:0.68rem;
-  font-family:var(--font-mono); color:#fff;
+  font-family:var(--font-mono); color:var(--text);
   margin-bottom:16px; letter-spacing:0.08em;
   backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
 }
@@ -61,17 +61,14 @@
 .seq-title {
   font-family:var(--font-display); font-size:clamp(2rem,4vw,3.4rem);
   font-weight:900; line-height:1.08; letter-spacing:-0.03em;
-  color:#fff; margin-bottom:14px;
-  text-shadow:0 2px 20px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.25);
+  color:var(--text); margin-bottom:14px;
 }
 .seq-title .glow {
-  color:#B8E8FF;
-  -webkit-text-fill-color:#B8E8FF;
-  text-shadow:0 2px 20px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.25);
+  color:var(--cyan-deep);
+  -webkit-text-fill-color:var(--cyan-deep);
 }
 .seq-desc {
-  color:rgba(255,255,255,0.88); font-size:0.95rem; line-height:1.65;
-  text-shadow:0 1px 10px rgba(0,0,0,0.35);
+  color:var(--muted); font-size:0.95rem; line-height:1.65;
 }
 .seq-stats {
   display:flex; gap:28px; margin-top:20px; padding-top:16px;
@@ -79,8 +76,7 @@
 }
 .seq-stat-num {
   font-family:var(--font-mono); font-size:1.5rem; font-weight:700;
-  color:#B8E8FF; line-height:1;
-  text-shadow:0 2px 12px rgba(135,206,250,0.5);
+  color:var(--cyan-deep); line-height:1;
 }
 .seq-stat-label {
   font-size:0.65rem; color:rgba(255,255,255,0.6); font-family:var(--font-mono);
