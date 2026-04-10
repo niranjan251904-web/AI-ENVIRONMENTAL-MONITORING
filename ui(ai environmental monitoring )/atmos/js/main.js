@@ -176,21 +176,15 @@ let navOpen = false;
 function toggleMobileNav() {
   navOpen = !navOpen;
   document.getElementById('mobileNav').classList.toggle('open', navOpen);
+  document.getElementById('hamburger').classList.toggle('active', navOpen);
   document.body.style.overflow = navOpen ? 'hidden' : '';
-  const spans = document.querySelectorAll('#hamburger span');
-  if (navOpen) {
-    spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
-    spans[1].style.opacity = '0';
-    spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
-  } else {
-    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
-  }
 }
+
 function closeMobileNav() {
   navOpen = false;
   document.getElementById('mobileNav').classList.remove('open');
+  document.getElementById('hamburger').classList.remove('active');
   document.body.style.overflow = '';
-  document.querySelectorAll('#hamburger span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
 }
 
 // ── MOBILE BOTTOM NAV BAR (auto-injected) ──
