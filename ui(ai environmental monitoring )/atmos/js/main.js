@@ -157,6 +157,29 @@ function closeMobileNav() {
   document.querySelectorAll('#hamburger span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
 }
 
+// ── MOBILE BOTTOM NAV BAR (auto-injected) ──
+(function(){
+  const page = location.pathname.split('/').pop() || 'index.html';
+  const navItems = [
+    { icon:'🏠', label:'Home', href:'index.html' },
+    { icon:'⚡', label:'Features', href:'features.html' },
+    { icon:'📊', label:'Dashboard', href:'dashboard.html' },
+    { icon:'🚨', label:'Alerts', href:'alerts.html' },
+    { icon:'🔬', label:'How', href:'how.html' },
+  ];
+  const nav = document.createElement('div');
+  nav.className = 'mobile-bottom-nav';
+  nav.innerHTML = '<div class="bottom-nav-items">' + navItems.map(item => {
+    const isActive = page === item.href ||
+      (item.href === 'features.html' && ['air-quality.html','ocean-health.html','climate-forecast.html','deforestation-alerts.html'].includes(page));
+    return `<a class="bottom-nav-item${isActive?' active':''}" href="${item.href}">
+      <span class="bottom-nav-icon">${item.icon}</span>
+      <span class="bottom-nav-label">${item.label}</span>
+    </a>`;
+  }).join('') + '</div>';
+  document.body.appendChild(nav);
+})();
+
 // ── SUMMARY BAR OBSERVER ──
 const sumObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
