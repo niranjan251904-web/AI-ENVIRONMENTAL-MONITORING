@@ -220,12 +220,10 @@
   <!-- Results -->
   <div class="results-panel" id="resultsPanel">
     <div class="results-header">
-      <div class="results-title">🌬️ Air Quality Analysis</div>
-      <div class="aqi-score" id="aqiScore">--</div>
+      <div class="results-title">🌬️ AI Air Quality Analysis</div>
     </div>
-    <div class="results-grid" id="resultsGrid"></div>
-    <div class="results-summary" id="resultsSummary"></div>
-    <div id="mindpalWrapper" style="margin-top: 32px; border-radius: 16px; overflow: hidden; border: 1px solid rgba(91,184,245,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.05);"></div>
+    <div id="resultsSummary" style="margin-bottom: 24px;"></div>
+    <div id="mindpalWrapper" style="border-radius: 16px; overflow: hidden; border: 1px solid rgba(91,184,245,0.2); box-shadow: 0 8px 32px rgba(0,0,0,0.05);"></div>
   </div>
 </div>
 
@@ -378,62 +376,14 @@ function analyzeImage(){
 }
 
 function showResults(){
-  // Generate realistic randomized results
-  const aqi = Math.floor(Math.random()*300)+20;
-  const pm25 = (Math.random()*200+5).toFixed(1);
-  const pm10 = (Math.random()*300+10).toFixed(1);
-  const no2 = (Math.random()*80+5).toFixed(1);
-  const so2 = (Math.random()*40+2).toFixed(1);
-  const o3 = (Math.random()*120+10).toFixed(1);
-  const co = (Math.random()*8+0.2).toFixed(1);
-
-  // AQI score display
-  const scoreEl = document.getElementById('aqiScore');
-  scoreEl.textContent = 'AQI ' + aqi;
-  scoreEl.className = 'aqi-score';
-  if(aqi <= 100) scoreEl.classList.add('good');
-  else if(aqi <= 200) scoreEl.classList.add('moderate');
-  else scoreEl.classList.add('unhealthy');
-
-  // Pollutant grid
-  const pollutants = [
-    { label:'PM2.5', value:pm25, unit:'µg/m³', pct:Math.min(100,pm25/250*100), level:pm25<35?'low':pm25<75?'mid':'high' },
-    { label:'PM10', value:pm10, unit:'µg/m³', pct:Math.min(100,pm10/400*100), level:pm10<50?'low':pm10<150?'mid':'high' },
-    { label:'NO₂', value:no2, unit:'ppb', pct:Math.min(100,no2/100*100), level:no2<30?'low':no2<60?'mid':'high' },
-    { label:'SO₂', value:so2, unit:'ppb', pct:Math.min(100,so2/50*100), level:so2<15?'low':so2<30?'mid':'high' },
-    { label:'O₃', value:o3, unit:'ppb', pct:Math.min(100,o3/150*100), level:o3<50?'low':o3<100?'mid':'high' },
-    { label:'CO', value:co, unit:'mg/m³', pct:Math.min(100,co/10*100), level:co<4?'low':co<7?'mid':'high' },
-  ];
-
-  const grid = document.getElementById('resultsGrid');
-  grid.innerHTML = pollutants.map(p=>`
-    <div class="result-item">
-      <div class="result-label">${p.label}</div>
-      <div class="result-value">${p.value} <span class="result-unit">${p.unit}</span></div>
-      <div class="result-bar"><div class="result-bar-fill ${p.level}" style="width:0%"></div></div>
-    </div>
-  `).join('');
+  const analyzing = document.getElementById('analyzingPanel');
+  const results = document.getElementById('resultsPanel');
+  analyzing.classList.remove('show');
 
   // Summary
-  let condition, advice, tags;
-  if(aqi <= 50){
-    condition = 'Good'; advice = 'Air quality is satisfactory. No health risk. Enjoy outdoor activities.';
-    tags = ['Clean Air','Low Risk','Safe for Exercise'];
-  } else if(aqi <= 100){
-    condition = 'Moderate'; advice = 'Air quality is acceptable. Sensitive individuals should limit prolonged outdoor exertion.';
-    tags = ['Moderate Risk','Sensitive Groups Caution','Acceptable'];
-  } else if(aqi <= 200){
-    condition = 'Unhealthy'; advice = 'Everyone may begin to experience health effects. Sensitive groups should avoid outdoor exertion. Consider wearing an N95 mask.';
-    tags = ['Health Risk','Limit Outdoor Activity','N95 Recommended'];
-  } else {
-    condition = 'Hazardous'; advice = 'Health alert — everyone may experience serious health effects. Avoid all outdoor activity. Use air purifiers indoors.';
-    tags = ['⚠️ Hazardous','Stay Indoors','Air Purifier Required','Health Emergency'];
-  }
-
   document.getElementById('resultsSummary').innerHTML = `
-    <div class="summary-title">Assessment: ${condition}</div>
-    <div class="summary-text">${advice}</div>
-    <div class="summary-tags">${tags.map(t=>'<span class="summary-tag">'+t+'</span>').join('')}</div>
+    <div class="summary-title">System Assessment Status: READY</div>
+    <div class="summary-text">Our environmental vision models have processed the image signatures. Please interact with the AI Agent below to examine specific pollutant concentrations and health recommendations.</div>
   `;
 
   // Activate MindPal Chatbot Embed
@@ -451,13 +401,6 @@ function showResults(){
   }
 
   document.getElementById('resultsPanel').classList.add('show');
-
-  // Animate bars
-  setTimeout(()=>{
-    document.querySelectorAll('.result-bar-fill').forEach((bar,i)=>{
-      bar.style.width = pollutants[i].pct + '%';
-    });
-  }, 100);
 }
 </script>
 </body>
