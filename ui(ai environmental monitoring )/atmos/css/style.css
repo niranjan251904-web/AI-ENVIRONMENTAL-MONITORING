@@ -55,12 +55,15 @@ body {
 body::before {
   content:''; position:fixed; inset:0; pointer-events:none; z-index:1;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
-  opacity:0.15;
+  opacity:0.12;
+}
+@media (max-width: 768px) {
+  body::before { display: none; }
 }
 
 /* ── PARALLAX ORBS ── */
 .orb-container { position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
-.orb { position:absolute; border-radius:50%; filter:blur(100px); opacity:0.35; will-change:transform; }
+.orb { position:absolute; border-radius:50%; filter:blur(60px); opacity:0.35; will-change:transform; }
 .orb-1 { width:800px; height:800px; background:radial-gradient(circle,#D6EDF8,transparent); top:-250px; left:-250px; }
 .orb-2 { width:600px; height:600px; background:radial-gradient(circle,#A8DFFF,transparent); bottom:-150px; right:-150px; }
 .orb-3 { width:450px; height:450px; background:radial-gradient(circle,#EAF4FB,transparent); top:45%; left:55%; }
@@ -77,10 +80,11 @@ nav {
   position:fixed; top:20px; left:50%; transform:translateX(-50%);
   z-index:1000; width:calc(100% - 40px); max-width:920px;
   background:rgba(255,255,255,0.6);
-  backdrop-filter:blur(32px) saturate(200%);
-  -webkit-backdrop-filter:blur(32px) saturate(200%);
+  backdrop-filter:blur(20px) saturate(180%);
+  -webkit-backdrop-filter:blur(20px) saturate(180%);
   border:1px solid rgba(91,184,245,0.12);
   border-radius:22px;
+  will-change: transform;
   padding:14px 28px;
   display:flex; align-items:center; justify-content:space-between;
   box-shadow:0 8px 48px rgba(91,184,245,0.08), 0 1px 3px rgba(0,0,0,0.04);
@@ -132,8 +136,8 @@ section { position:relative; z-index:2; }
 .liquid-glass {
   position:relative;
   background:linear-gradient(135deg,rgba(255,255,255,0.75) 0%,rgba(234,244,251,0.5) 40%,rgba(214,237,248,0.3) 100%);
-  backdrop-filter:blur(36px) saturate(180%);
-  -webkit-backdrop-filter:blur(36px) saturate(180%);
+  backdrop-filter:blur(24px) saturate(160%);
+  -webkit-backdrop-filter:blur(24px) saturate(160%);
   border-radius:28px;
   border:1px solid rgba(91,184,245,0.15);
   box-shadow:0 2px 0 rgba(255,255,255,0.6) inset, 0 20px 60px rgba(91,184,245,0.08), 0 1px 3px rgba(0,0,0,0.04);
@@ -629,6 +633,12 @@ footer { border-top:1px solid rgba(91,184,245,0.1); padding:56px 24px 40px; text
   .sol-card:hover { transform:none; }
   .metric-card:hover { transform:none; }
   .alert-card:hover { transform:none; }
+  
+  /* Performance: Disable heavy filters on mobile */
+  * { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; }
+  .liquid-glass, nav, .mindpal-container, .back-btn, .feat-card, .summary-card {
+    background: rgba(255,255,255,0.95) !important;
+  }
 }
 
 /* ═══ SAFE AREA INSETS (notched phones) ═══ */

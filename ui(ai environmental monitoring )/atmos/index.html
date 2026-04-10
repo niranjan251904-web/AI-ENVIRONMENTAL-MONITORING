@@ -152,8 +152,8 @@ body::before { display:none !important; }
   </button>
 </nav>
 
-<!-- Fixed background frame -->
-<img class="seq-bg" id="seqFrame" src="hero/frame/ai%20hero%20se3ction/ezgif-frame-001.jpg" alt=""/>
+<!-- Fixed background frame (Canvas for performance) -->
+<canvas class="seq-bg" id="seqFrameCanvas"></canvas>
 
 <!-- ══════════ SCROLL SECTIONS ══════════ -->
 
@@ -297,7 +297,7 @@ body::before { display:none !important; }
   const STEP = 2;
   const TOTAL_ORIGINAL = 80;
   const FOLDER = 'hero/frame/ai%20hero%20se3ction/ezgif-frame-';
-  const frame = document.getElementById('seqFrame');
+  const canvas = document.getElementById('seqFrameCanvas');
   const bar = document.getElementById('seqProgress');
   const hint = document.getElementById('scrollHint');
 
@@ -352,22 +352,52 @@ body::before { display:none !important; }
   // Scroll handler — throttled with rAF
   let lastFi = -1;
   let ticking = false;
+  const ctx = canvas.getContext('2d', { alpha: false });
+
+  function drawFrame(idx) {
+    const img = cache[idx];
+    if (img && img.complete) {
+      // Maintaining aspect ratio (cover)
+      const canvasRatio = canvas.width / canvas.height;
+      const imgRatio = img.width / img.height;
+      let drawW, drawH, drawX, drawY;
+
+      if (canvasRatio > imgRatio) {
+        drawW = canvas.width;
+        drawH = canvas.width / imgRatio;
+        drawX = 0;
+        drawY = (canvas.height - drawH) / 2;
+      } else {
+        drawH = canvas.height;
+        drawW = canvas.height * imgRatio;
+        drawX = (canvas.width - drawW) / 2;
+        drawY = 0;
+      }
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
+  }
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth * window.devicePixelRatio;
+    canvas.height = window.innerHeight * window.devicePixelRatio;
+    if (lastFi !== -1) drawFrame(lastFi);
+  }
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
 
   function update(){
     const scrollY = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if(maxScroll <= 0) return;
+    if(maxScroll <= 0) {
+      ticking = false;
+      return;
+    }
     const progress = Math.min(1, scrollY / maxScroll);
     const fi = Math.min(TOTAL-1, Math.floor(progress * TOTAL));
 
     if(fi !== lastFi){
       lastFi = fi;
-      // Use cached image if ready, else set src directly
-      if(cache[fi] && cache[fi].complete){
-        frame.src = cache[fi].src;
-      } else {
-        frame.src = srcs[fi];
-      }
+      drawFrame(fi);
     }
 
     bar.style.width = (progress*100)+'%';
@@ -385,7 +415,13 @@ body::before { display:none !important; }
     }
   }, {passive:true});
 
-  update();
+  // Initial draw once first frame loads
+  const firstImg = new Image();
+  firstImg.src = srcs[0];
+  firstImg.onload = () => {
+    cache[0] = firstImg;
+    drawFrame(0);
+  };
 })();
 </script>
 </body>

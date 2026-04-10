@@ -25,7 +25,14 @@ if (pCanvas) {
   }
   initParticles();
   window.addEventListener('resize', initParticles);
+  
   function drawParticles() {
+    // Only animate if visible
+    if (getComputedStyle(pCanvas).display === 'none') {
+      requestAnimationFrame(drawParticles);
+      return;
+    }
+
     pCtx.clearRect(0, 0, pCanvas.width, pCanvas.height);
     particles.forEach(p => {
       p.x += p.vx; p.y += p.vy;
@@ -45,36 +52,65 @@ if (pCanvas) {
 // ── PARALLAX ORBS ──
 const orbs = ['orb1','orb2','orb3','orb4'].map(id => document.getElementById(id)).filter(Boolean);
 if (orbs.length) {
+  let scrollTicking = false;
   window.addEventListener('scroll', () => {
-    const y = window.scrollY;
-    if(orbs[0]) orbs[0].style.transform = `translate(${y*0.04}px, ${y*0.07}px)`;
-    if(orbs[1]) orbs[1].style.transform = `translate(${-y*0.05}px, ${-y*0.05}px)`;
-    if(orbs[2]) orbs[2].style.transform = `translate(${y*0.025}px, ${y*0.035}px)`;
-    if(orbs[3]) orbs[3].style.transform = `translate(${-y*0.03}px, ${y*0.04}px)`;
-  });
+    if (!scrollTicking) {
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if(orbs[0]) orbs[0].style.transform = `translate3d(${y*0.04}px, ${y*0.07}px, 0)`;
+        if(orbs[1]) orbs[1].style.transform = `translate3d(${-y*0.05}px, ${-y*0.05}px, 0)`;
+        if(orbs[2]) orbs[2].style.transform = `translate3d(${y*0.025}px, ${y*0.035}px, 0)`;
+        if(orbs[3]) orbs[3].style.transform = `translate3d(${-y*0.03}px, ${y*0.04}px, 0)`;
+        scrollTicking = false;
+      });
+      scrollTicking = true;
+    }
+  }, { passive: true });
+
+  let mouseTicking = false;
   document.addEventListener('mousemove', e => {
-    const xF = (e.clientX / window.innerWidth - 0.5);
-    const yF = (e.clientY / window.innerHeight - 0.5);
-    if(orbs[0]) orbs[0].style.transform += ` translate(${xF*25}px, ${yF*25}px)`;
-    if(orbs[2]) orbs[2].style.transform += ` translate(${xF*-18}px, ${yF*-18}px)`;
-  });
+    if (!mouseTicking) {
+      requestAnimationFrame(() => {
+        const xF = (e.clientX / window.innerWidth - 0.5);
+        const yF = (e.clientY / window.innerHeight - 0.5);
+        if(orbs[0]) orbs[0].style.transform += ` translate3d(${xF*25}px, ${yF*25}px, 0)`;
+        if(orbs[2]) orbs[2].style.transform += ` translate3d(${xF*-18}px, ${yF*-18}px, 0)`;
+        mouseTicking = false;
+      });
+      mouseTicking = true;
+    }
+  }, { passive: true });
 }
 
 // ── CARD MOUSE GLOW ──
 document.querySelectorAll('.feat-card').forEach(card => {
+  let cardTicking = false;
   card.addEventListener('mousemove', e => {
-    const r = card.getBoundingClientRect();
-    card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
-    card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
-  });
+    if (!cardTicking) {
+      requestAnimationFrame(() => {
+        const r = card.getBoundingClientRect();
+        card.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100) + '%');
+        card.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100) + '%');
+        cardTicking = false;
+      });
+      cardTicking = true;
+    }
+  }, { passive: true });
 });
 
 // ── NAV SCROLL ──
 const mainNav = document.getElementById('mainNav');
 if (mainNav) {
+  let navTicking = false;
   window.addEventListener('scroll', () => {
-    mainNav.classList.toggle('scrolled', window.scrollY > 50);
-  });
+    if (!navTicking) {
+      requestAnimationFrame(() => {
+        mainNav.classList.toggle('scrolled', window.scrollY > 50);
+        navTicking = false;
+      });
+      navTicking = true;
+    }
+  }, { passive: true });
 }
 
 // ── SCROLL REVEAL ──
