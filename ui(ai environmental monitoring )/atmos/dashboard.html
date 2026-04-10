@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — Live Dashboard</title>
+<meta name="description" content="Real-time Global AQI Command Center. Monitor environmental hotspots, pollution sources, and air quality trends worldwide."/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="dashboard.html" class="active">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="dashboard">
+  <div class="dashboard-wrap">
+    <div class="section-label reveal" style="justify-content:center;">LIVE TELEMETRY</div>
+    <h2 class="section-title reveal d1" style="text-align:center;margin-bottom:40px;">Global AQI <span style="color:var(--cyan)">Command Center</span></h2>
+
+    <div class="summary-bar reveal d2">
+      <div class="summary-card liquid-glass">
+        <span class="summary-num sensors" data-count="2300000" data-format="abbr" data-suffix="+">0</span>
+        <div class="summary-label">🔵 Sensors Active</div>
+      </div>
+      <div class="summary-card liquid-glass">
+        <span class="summary-num countries" data-count="147" data-suffix="">0</span>
+        <div class="summary-label">🌍 Countries</div>
+      </div>
+      <div class="summary-card liquid-glass">
+        <span class="summary-num reduction" data-count="34" data-suffix="%">0</span>
+        <div class="summary-label">📉 AQI Reduction</div>
+      </div>
+      <div class="summary-card liquid-glass">
+        <span class="summary-num people" data-count="1200" data-format="abbr-m" data-suffix="+">0</span>
+        <div class="summary-label">🛡️ People Protected</div>
+      </div>
+    </div>
+
+    <div class="dashboard-body reveal d3">
+      <div class="liquid-glass table-card">
+        <div class="table-header">
+          <span class="table-title"><span class="live-dot"></span>Global Hotspot Monitor</span>
+          <select class="table-filter">
+            <option>All Regions</option>
+            <option>Critical Only</option>
+            <option>Asia Pacific</option>
+            <option>Europe</option>
+          </select>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">New Delhi, India</div><div class="city-coord">28.61°N 77.21°E</div></div>
+          <span class="aqi-badge critical">CRITICAL</span>
+          <span class="aqi-value" style="color:var(--red)">AQI 350</span>
+          <div class="aqi-trend">↑ Rising — Industrial + Transport</div>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">Beijing, China</div><div class="city-coord">39.90°N 116.41°E</div></div>
+          <span class="aqi-badge warning">WARNING</span>
+          <span class="aqi-value" style="color:var(--yellow)">AQI 180</span>
+          <div class="aqi-trend">↓ Improving — Wind dispersal</div>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">Jakarta, Indonesia</div><div class="city-coord">6.21°S 106.85°E</div></div>
+          <span class="aqi-badge critical">CRITICAL</span>
+          <span class="aqi-value" style="color:var(--red)">AQI 210</span>
+          <div class="aqi-trend">↑ Rising — Peatland fires</div>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">São Paulo, Brazil</div><div class="city-coord">23.55°S 46.63°W</div></div>
+          <span class="aqi-badge warning">WARNING</span>
+          <span class="aqi-value" style="color:var(--yellow)">AQI 110</span>
+          <div class="aqi-trend">→ Stable — Vehicle emissions</div>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">London, UK</div><div class="city-coord">51.51°N 0.13°W</div></div>
+          <span class="aqi-badge good">GOOD</span>
+          <span class="aqi-value" style="color:var(--green)">AQI 65</span>
+          <div class="aqi-trend">↓ Improving — EV adoption</div>
+        </div>
+        <div class="aqi-row">
+          <div><div class="city-name">Los Angeles, USA</div><div class="city-coord">34.05°N 118.24°W</div></div>
+          <span class="aqi-badge good">MODERATE</span>
+          <span class="aqi-value" style="color:var(--green)">AQI 85</span>
+          <div class="aqi-trend">→ Stable — Seasonal average</div>
+        </div>
+        <button class="download-btn" onclick="alert('📄 Generating compliance report...')">⬇ Download Environmental Report (PDF)</button>
+      </div>
+
+      <div class="liquid-glass chart-card">
+        <div class="chart-title">Pollution Source Breakdown</div>
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 170 170">
+            <circle cx="85" cy="85" r="60" fill="none" stroke="rgba(91,184,245,0.08)" stroke-width="24"/>
+            <circle cx="85" cy="85" r="60" fill="none" stroke="#1A7EC8" stroke-width="24"
+              stroke-dasharray="169.6 376.99" stroke-dashoffset="0" stroke-linecap="round"
+              transform="rotate(-90 85 85)"/>
+            <circle cx="85" cy="85" r="60" fill="none" stroke="#E53E5C" stroke-width="24"
+              stroke-dasharray="131.9 376.99" stroke-dashoffset="-169.6" stroke-linecap="round"
+              transform="rotate(-90 85 85)"/>
+            <circle cx="85" cy="85" r="60" fill="none" stroke="#D4A017" stroke-width="24"
+              stroke-dasharray="56.5 376.99" stroke-dashoffset="-301.5" stroke-linecap="round"
+              transform="rotate(-90 85 85)"/>
+            <text x="85" y="80" text-anchor="middle" fill="#0D1B2A" font-size="24" font-weight="800" font-family="Inter,sans-serif">AI</text>
+            <text x="85" y="98" text-anchor="middle" fill="rgba(13,27,42,0.35)" font-size="8.5" font-family="Space Mono,monospace" letter-spacing="0.08em">ANALYSIS</text>
+          </svg>
+          <div class="donut-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div><span class="legend-label">Vehicles</span><span class="legend-val" style="color:var(--cyan)">45%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div><span class="legend-label">Industry</span><span class="legend-val" style="color:var(--red)">35%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--yellow)"></div><span class="legend-label">Agriculture</span><span class="legend-val" style="color:var(--yellow)">15%</span></div>
+            <div class="legend-item"><div class="legend-dot" style="background:rgba(13,27,42,0.1)"></div><span class="legend-label">Other</span><span class="legend-val" style="color:var(--muted)">5%</span></div>
+          </div>
+        </div>
+
+        <div style="margin-top:28px; border-top:1px solid rgba(91,184,245,0.1); padding-top:24px;">
+          <div class="chart-title">7-Day AQI Index Trend</div>
+          <svg viewBox="0 0 280 100" style="width:100%;height:auto;">
+            <defs>
+              <linearGradient id="aqiGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(91,184,245,0.3)"/>
+                <stop offset="100%" stop-color="rgba(91,184,245,0)"/>
+              </linearGradient>
+            </defs>
+            <line x1="30" y1="10" x2="270" y2="10" stroke="rgba(91,184,245,0.08)" stroke-width="0.5"/>
+            <line x1="30" y1="35" x2="270" y2="35" stroke="rgba(91,184,245,0.08)" stroke-width="0.5"/>
+            <line x1="30" y1="60" x2="270" y2="60" stroke="rgba(91,184,245,0.08)" stroke-width="0.5"/>
+            <line x1="30" y1="85" x2="270" y2="85" stroke="rgba(91,184,245,0.08)" stroke-width="0.5"/>
+            <path d="M30,55 L70,50 L110,65 L150,45 L190,35 L230,30 L270,25 L270,85 L30,85 Z" fill="url(#aqiGrad)"/>
+            <polyline points="30,55 70,50 110,65 150,45 190,35 230,30 270,25" fill="none" stroke="#1A7EC8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="30" cy="55" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="70" cy="50" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="110" cy="65" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="150" cy="45" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="190" cy="35" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="230" cy="30" r="3.5" fill="#FFFFFF" stroke="#1A7EC8" stroke-width="2"/>
+            <circle cx="270" cy="25" r="4" fill="#1A7EC8" stroke="#FFFFFF" stroke-width="2"/>
+            <text x="30" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Mon</text>
+            <text x="70" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Tue</text>
+            <text x="110" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Wed</text>
+            <text x="150" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Thu</text>
+            <text x="190" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Fri</text>
+            <text x="230" y="96" fill="rgba(13,27,42,0.35)" font-size="7" font-family="Space Mono,monospace" text-anchor="middle">Sat</text>
+            <text x="270" y="96" fill="#1A7EC8" font-size="7" font-family="Space Mono,monospace" text-anchor="middle" font-weight="700">Now</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — AI for a Breathing Planet</title>
+<meta name="description" content="AI-powered environmental monitoring platform. Monitor air quality, predict pollution events, and protect communities with real-time planetary intelligence."/>
+<link rel="stylesheet" href="css/style.css"/>
+<style>
+/* ── FULLPAGE SCROLL SEQUENCE ── */
+/* The entire page IS the scroll trigger — frame image is fixed background */
+.seq-bg {
+  position:fixed; inset:0; z-index:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  pointer-events:none;
+}
+
+/* Spacer sections create scrollable height — 80 frames mapped across total page */
+.seq-spacer { position:relative; z-index:2; height:100vh; }
+
+/* Text overlays — no cards, just floating text */
+.seq-panel {
+  position:relative; z-index:3;
+  max-width:520px; padding:40px;
+  opacity:0; pointer-events:none;
+  transition:opacity 0.7s ease, transform 0.7s ease;
+}
+.seq-panel.active { opacity:1; pointer-events:auto; }
+
+/* Positioning wrappers */
+.seq-left { display:flex; align-items:center; justify-content:flex-start; height:100vh; padding-left:5%; }
+.seq-right { display:flex; align-items:center; justify-content:flex-end; height:100vh; padding-right:5%; }
+.seq-center { display:flex; align-items:center; justify-content:center; height:100vh; }
+.seq-center .seq-panel { max-width:680px; text-align:center; }
+
+.seq-panel.slide-left { transform:translateX(-40px); }
+.seq-panel.slide-left.active { transform:translateX(0); }
+.seq-panel.slide-right { transform:translateX(40px); }
+.seq-panel.slide-right.active { transform:translateX(0); }
+.seq-panel.slide-up { transform:translateY(40px); }
+.seq-panel.slide-up.active { transform:translateY(0); }
+
+/* Text styles — white on video */
+.seq-badge {
+  display:inline-flex; align-items:center; gap:6px;
+  background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.2);
+  border-radius:100px; padding:5px 14px; font-size:0.68rem;
+  font-family:var(--font-mono); color:#fff;
+  margin-bottom:16px; letter-spacing:0.08em;
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.seq-badge::before {
+  content:''; width:6px; height:6px; background:var(--green);
+  border-radius:50%; box-shadow:0 0 8px var(--green); animation:pulse 2s infinite;
+}
+.seq-title {
+  font-family:var(--font-display); font-size:clamp(2rem,4vw,3.4rem);
+  font-weight:900; line-height:1.08; letter-spacing:-0.03em;
+  color:#fff; margin-bottom:14px;
+  text-shadow:0 2px 20px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.25);
+}
+.seq-title .glow {
+  color:#B8E8FF;
+  -webkit-text-fill-color:#B8E8FF;
+  text-shadow:0 2px 20px rgba(0,0,0,0.4), 0 1px 4px rgba(0,0,0,0.25);
+}
+.seq-desc {
+  color:rgba(255,255,255,0.88); font-size:0.95rem; line-height:1.65;
+  text-shadow:0 1px 10px rgba(0,0,0,0.35);
+}
+.seq-stats {
+  display:flex; gap:28px; margin-top:20px; padding-top:16px;
+  border-top:1px solid rgba(255,255,255,0.2);
+}
+.seq-stat-num {
+  font-family:var(--font-mono); font-size:1.5rem; font-weight:700;
+  color:#B8E8FF; line-height:1;
+  text-shadow:0 2px 12px rgba(135,206,250,0.5);
+}
+.seq-stat-label {
+  font-size:0.65rem; color:rgba(255,255,255,0.6); font-family:var(--font-mono);
+  letter-spacing:0.04em; margin-top:4px;
+  text-shadow:0 1px 4px rgba(0,0,0,0.2);
+}
+.seq-cta-row {
+  display:flex; gap:14px; justify-content:center;
+  margin-top:28px; flex-wrap:wrap;
+}
+.seq-progress {
+  position:fixed; bottom:0; left:0; height:3px;
+  background:linear-gradient(90deg,var(--cyan-deep),var(--cyan));
+  z-index:100; width:0; transition:width 0.05s linear;
+}
+.seq-scroll-hint {
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%);
+  z-index:50; display:flex; flex-direction:column; align-items:center; gap:6px;
+  transition:opacity 0.4s;
+}
+.seq-scroll-hint.hide { opacity:0; pointer-events:none; }
+.seq-scroll-hint span {
+  font-size:0.65rem; color:rgba(255,255,255,0.8); font-family:var(--font-mono);
+  letter-spacing:0.12em; text-shadow:0 1px 6px rgba(0,0,0,0.4);
+}
+.seq-scroll-line {
+  width:1px; height:40px;
+  background:linear-gradient(to bottom,rgba(255,255,255,0.7),transparent);
+  animation:scrollDrop 2s ease-in-out infinite;
+}
+
+/* Hide the shared CSS body bg/orbs/particles on this page — fullscreen video */
+.orb-container, #particles-canvas { display:none !important; }
+body::before { display:none !important; }
+
+/* Marquee + footer sit on top of sequence */
+.marquee-section, footer { position:relative; z-index:10; }
+
+@media(max-width:768px){
+  .seq-panel { max-width:90%; padding:20px; }
+  .seq-title { font-size:clamp(1.4rem,6vw,2rem); }
+  .seq-stats { gap:16px; flex-wrap:wrap; }
+  .seq-cta-row { flex-direction:column; align-items:center; }
+  .seq-left, .seq-right { padding-left:5%; padding-right:5%; justify-content:center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile Nav -->
+<div class="mobile-nav" id="mobileNav">
+  <a href="index.html" onclick="closeMobileNav()">Home</a>
+  <a href="features.html" onclick="closeMobileNav()">Features</a>
+  <a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a>
+  <a href="solutions.html" onclick="closeMobileNav()">Solutions</a>
+  <a href="alerts.html" onclick="closeMobileNav()">Alerts</a>
+  <a href="how.html" onclick="closeMobileNav()">How It Works</a>
+</div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Fixed background frame -->
+<img class="seq-bg" id="seqFrame" src="hero/frame/ai%20hero%20se3ction/ezgif-frame-001.jpg" alt=""/>
+
+<!-- ══════════ SCROLL SECTIONS ══════════ -->
+
+<!-- Section 1: Hero intro -->
+<div class="seq-center">
+  <div class="seq-panel slide-up active" data-panel="0" style="max-width:750px;text-align:center;">
+    <div class="seq-badge" style="justify-content:center;">GREENSOFTTECH HACKATHON 2025</div>
+    <h1 class="seq-title" style="font-size:clamp(2.8rem,7vw,5.5rem);text-align:center;">The Future of<br><span class="glow">Environmental<br>Intelligence.</span></h1>
+    <p class="seq-desc" style="text-align:center;max-width:520px;margin:0 auto;">Scroll to discover how ATMOS is transforming<br>planetary monitoring with AI.</p>
+  </div>
+</div>
+
+<!-- Section 2: Panel 1 — LEFT (frames ~1-20) -->
+<div class="seq-left">
+  <div class="seq-panel slide-left" data-panel="1">
+    <div class="seq-badge">LIVE — 2.3M+ SENSORS</div>
+    <h1 class="seq-title">AI for a<br><span class="glow">Breathing Planet.</span></h1>
+    <p class="seq-desc">Real-time environmental intelligence platform. Monitor air quality, predict pollution events, and protect 1.2 billion people with planetary-scale AI.</p>
+    <div class="seq-stats">
+      <div><div class="seq-stat-num">2.3M+</div><div class="seq-stat-label">SENSORS</div></div>
+      <div><div class="seq-stat-num">147</div><div class="seq-stat-label">COUNTRIES</div></div>
+      <div><div class="seq-stat-num">98.4%</div><div class="seq-stat-label">ACCURACY</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 3: Empty spacer (transition) -->
+<div class="seq-spacer"></div>
+
+<!-- Section 4: Panel 2 — RIGHT (frames ~21-40) -->
+<div class="seq-right">
+  <div class="seq-panel slide-right" data-panel="2">
+    <div class="seq-badge">SATELLITE MONITORING</div>
+    <h2 class="seq-title">Above the Canopy.<br><span class="glow">Beyond the Clouds.</span></h2>
+    <p class="seq-desc">Our satellite constellation monitors 40+ atmospheric metrics — from PM2.5 concentrations to methane plumes — processing 400TB of environmental data every day.</p>
+    <div class="seq-stats">
+      <div><div class="seq-stat-num">400TB</div><div class="seq-stat-label">DATA / DAY</div></div>
+      <div><div class="seq-stat-num">&lt;12h</div><div class="seq-stat-label">DETECTION</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: Empty spacer (transition) -->
+<div class="seq-spacer"></div>
+
+<!-- Section 6: Panel 3 — LEFT (frames ~41-60) -->
+<div class="seq-left">
+  <div class="seq-panel slide-left" data-panel="3">
+    <div class="seq-badge">AI PREDICTION ENGINE</div>
+    <h2 class="seq-title">Predict Crises<br><span class="glow">Before They Strike.</span></h2>
+    <p class="seq-desc">LSTM + Transformer hybrid models deliver 7-day advance warnings for extreme weather, pollution spikes, and ecological tipping points — with sub-200ms latency.</p>
+    <div class="seq-stats">
+      <div><div class="seq-stat-num">7-Day</div><div class="seq-stat-label">ADVANCE</div></div>
+      <div><div class="seq-stat-num">200ms</div><div class="seq-stat-label">LATENCY</div></div>
+      <div><div class="seq-stat-num">34%</div><div class="seq-stat-label">AQI REDUCTION</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 7: Empty spacer (transition) -->
+<div class="seq-spacer"></div>
+
+<!-- Section 8: Panel 4 — CENTER + CTA (frames ~61-80) -->
+<div class="seq-center">
+  <div class="seq-panel slide-up" data-panel="4">
+    <div class="seq-badge" style="justify-content:center;">GREENSOFTTECH HACKATHON 2025</div>
+    <h2 class="seq-title" style="text-align:center;">Monitor. Predict.<br><span class="glow">Protect Our Planet.</span></h2>
+    <p class="seq-desc" style="text-align:center;">ATMOS is our answer to how AI can provide critical tools for monitoring environmental changes and mitigating pollution on a global scale.</p>
+    <div class="seq-cta-row">
+      <a href="dashboard.html" class="btn-primary"><span>🌍</span> View Live Dashboard</a>
+      <a href="features.html" class="btn-secondary"><span>⚡</span> Explore Features</a>
+    </div>
+  </div>
+</div>
+
+<!-- Final spacer -->
+<div class="seq-spacer"></div>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item"><span class="marquee-dot"></span>AIR QUALITY INDEX</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>OCEAN ACIDIFICATION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>DEFORESTATION ALERTS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CARBON EMISSIONS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SOIL CONTAMINATION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CLIMATE FORECASTING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PFAS DETECTION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>WATER QUALITY</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SATELLITE CV</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>EDGE SENSOR NETWORK</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>AIR QUALITY INDEX</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>OCEAN ACIDIFICATION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>DEFORESTATION ALERTS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CARBON EMISSIONS</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SOIL CONTAMINATION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>CLIMATE FORECASTING</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>PFAS DETECTION</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>WATER QUALITY</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>SATELLITE CV</span>
+    <span class="marquee-item"><span class="marquee-dot"></span>EDGE SENSOR NETWORK</span>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links">
+    <a href="features.html">Features</a>
+    <a href="dashboard.html">Dashboard</a>
+    <a href="solutions.html">Solutions</a>
+    <a href="alerts.html">Alerts</a>
+    <a href="how.html">How It Works</a>
+  </div>
+  <div class="footer-tags">
+    <span class="footer-tag">React + Vite</span>
+    <span class="footer-tag">Three.js Globe</span>
+    <span class="footer-tag">GSAP ScrollTrigger</span>
+    <span class="footer-tag">Transformer ML</span>
+    <span class="footer-tag">Edge IoT Network</span>
+    <span class="footer-tag">Satellite CV</span>
+  </div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+
+<!-- Progress bar -->
+<div class="seq-progress" id="seqProgress"></div>
+
+<!-- Scroll hint -->
+<div class="seq-scroll-hint" id="scrollHint">
+  <span>SCROLL TO EXPLORE</span>
+  <div class="seq-scroll-line"></div>
+</div>
+
+<script src="js/main.js"></script>
+<script>
+(function(){
+  const TOTAL = 80;
+  const FOLDER = 'hero/frame/ai%20hero%20se3ction/ezgif-frame-';
+  const frame = document.getElementById('seqFrame');
+  const bar = document.getElementById('seqProgress');
+  const hint = document.getElementById('scrollHint');
+
+  // Build src array
+  const srcs = [];
+  for(let i=0;i<TOTAL;i++){
+    srcs[i] = FOLDER + String(i+1).padStart(3,'0') + '.jpg';
+  }
+
+  // Preload all frames
+  for(let i=0;i<TOTAL;i++){
+    const img = new Image();
+    img.src = srcs[i];
+  }
+
+  // Panel visibility via IntersectionObserver
+  const panels = document.querySelectorAll('.seq-panel');
+  const observer = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting) e.target.classList.add('active');
+      else e.target.classList.remove('active');
+    });
+  }, { threshold:0.3 });
+  panels.forEach(p=>observer.observe(p));
+
+  // Scroll handler — map entire page scroll to 80 frames
+  let lastFi = -1;
+  function update(){
+    const scrollY = window.scrollY;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if(maxScroll <= 0) return;
+    const progress = Math.min(1, scrollY / maxScroll);
+    const fi = Math.min(TOTAL-1, Math.floor(progress * TOTAL));
+
+    if(fi !== lastFi){
+      lastFi = fi;
+      frame.src = srcs[fi];
+    }
+
+    bar.style.width = (progress*100)+'%';
+
+    if(progress > 0.02) hint.classList.add('hide');
+    else hint.classList.remove('hide');
+  }
+
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+</script>
+</body>
+</html>

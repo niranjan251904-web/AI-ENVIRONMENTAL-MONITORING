@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — Environmental Alerts</title>
+<meta name="description" content="Real-time environmental alerts for air quality, deforestation, water contamination, and extreme weather events."/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html" class="active">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="alerts">
+  <div class="alerts-wrap">
+    <div class="section-label reveal" style="justify-content:center;">LIVE ALERTS</div>
+    <h2 class="section-title reveal d1" style="text-align:center;margin-bottom:16px;">Environmental<br><span style="color:var(--cyan)">Intelligence Feed</span></h2>
+    <p class="section-sub reveal d2" style="text-align:center;margin:0 auto 48px;">Real-time notifications from our global sensor network and satellite monitoring systems.</p>
+
+    <div class="alerts-header reveal d3">
+      <div class="toggle-row">
+        <div class="toggle-item"><div class="toggle-switch" onclick="this.classList.toggle('off')"></div><span class="toggle-label">Critical</span></div>
+        <div class="toggle-item"><div class="toggle-switch" onclick="this.classList.toggle('off')"></div><span class="toggle-label">Warnings</span></div>
+        <div class="toggle-item"><div class="toggle-switch" onclick="this.classList.toggle('off')"></div><span class="toggle-label">Info</span></div>
+      </div>
+    </div>
+
+    <div class="alert-card" data-delay="0">
+      <span class="alert-icon">🔴</span>
+      <div>
+        <div class="alert-title">CRITICAL: AQI Breach — New Delhi NCR</div>
+        <div class="alert-body">PM2.5 concentration has exceeded 350 µg/m³ in the Indo-Gangetic Plain. Industrial + vehicular emissions combined with temperature inversion layer. Population exposure: 22M+ people. Immediate advisory issued for N95 respirator use and outdoor activity cessation.</div>
+        <div class="alert-time">⏱ 2 min ago — Source: AQI Sensor Grid India</div>
+      </div>
+    </div>
+    <div class="alert-card" data-delay="100">
+      <span class="alert-icon">🟡</span>
+      <div>
+        <div class="alert-title">WARNING: Deforestation Spike — Rondônia, Brazil</div>
+        <div class="alert-body">Satellite CV detected 340 hectares of canopy loss in the past 48 hours — 3.2x above monthly average. Pattern analysis suggests coordinated illegal logging. Cross-referencing with local enforcement data.</div>
+        <div class="alert-time">⏱ 15 min ago — Source: Sentinel-2 Satellite CV</div>
+      </div>
+    </div>
+    <div class="alert-card" data-delay="200">
+      <span class="alert-icon">🔴</span>
+      <div>
+        <div class="alert-title">CRITICAL: Ocean pH Anomaly — Great Barrier Reef</div>
+        <div class="alert-body">Subsurface pH dropped to 7.78 across 120km² zone — below coral survival threshold. Temperature correlation indicates potential mass bleaching event within 14 days. Marine research teams notified.</div>
+        <div class="alert-time">⏱ 28 min ago — Source: Ocean Buoy Network AUS</div>
+      </div>
+    </div>
+    <div class="alert-card" data-delay="300">
+      <span class="alert-icon">🟡</span>
+      <div>
+        <div class="alert-title">WARNING: Methane Plume — Permian Basin, Texas</div>
+        <div class="alert-body">Atmospheric methane spike detected at 2,800 ppb over 45km² area. Likely source: oil extraction facility venting. Plume trajectory modeling suggests downstream residential exposure within 6 hours.</div>
+        <div class="alert-time">⏱ 45 min ago — Source: MethaneSAT + Ground Sensors</div>
+      </div>
+    </div>
+    <div class="alert-card" data-delay="400">
+      <span class="alert-icon">🟢</span>
+      <div>
+        <div class="alert-title">INFO: AQI Improvement — London ULEZ Zone</div>
+        <div class="alert-body">30-day rolling average AQI in London's Ultra Low Emission Zone has dropped 18% compared to same period last year. NO₂ levels at lowest recorded. EV adoption rate correlation: r=0.87.</div>
+        <div class="alert-time">⏱ 1 hr ago — Source: UK Air Quality Network</div>
+      </div>
+    </div>
+    <div class="alert-card" data-delay="500">
+      <span class="alert-icon">🟡</span>
+      <div>
+        <div class="alert-title">WARNING: Wildfire Risk — Southern California</div>
+        <div class="alert-body">Climate Event Forecaster predicts 78% probability of wildfire ignition conditions within 72 hours. Santa Ana wind patterns + low humidity + dry vegetation index all at critical thresholds.</div>
+        <div class="alert-time">⏱ 2 hr ago — Source: Climate Event Forecaster v3</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>

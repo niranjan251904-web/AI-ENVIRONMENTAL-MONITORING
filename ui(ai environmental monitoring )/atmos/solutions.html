@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — AI Solutions</title>
+<meta name="description" content="Six AI models powering one planetary grid. Explore ATMOS solutions for environmental monitoring and protection."/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html" class="active">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="solutions">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;padding:0 0 20px;">
+    <div class="section-label reveal" style="justify-content:center;">AI SOLUTIONS</div>
+    <h2 class="section-title reveal d1">Six AI models.<br><span style="color:var(--cyan)"><em>One Planetary Grid.</em></span></h2>
+    <p class="section-sub reveal d2" style="margin:0 auto 72px;">Interconnected intelligence working in harmony to provide a comprehensive, real-time pulse of Earth's vital signs.</p>
+  </div>
+  <div class="solutions-grid">
+    <div class="sol-card reveal">
+      <span class="sol-icon">🌬️</span>
+      <div class="sol-title">Air Quality Forecaster</div>
+      <div class="sol-desc">LSTM + Transformer hybrid model for hyperlocal AQI prediction with 98.4% accuracy across 147 countries.</div>
+      <div class="sol-metric">98.4%</div>
+      <div class="sol-metric-label">FORECAST ACCURACY</div>
+    </div>
+    <div class="sol-card reveal d1">
+      <span class="sol-icon">💧</span>
+      <div class="sol-title">Water Contamination Scanner</div>
+      <div class="sol-desc">Neural spectroscopy models detect contaminant signatures in water bodies. Real-time alerts for PFAS and heavy metals.</div>
+      <div class="sol-metric">0.3ppb</div>
+      <div class="sol-metric-label">DETECTION THRESHOLD</div>
+    </div>
+    <div class="sol-card reveal d2">
+      <span class="sol-icon">🛰️</span>
+      <div class="sol-title">Satellite Deforestation CV</div>
+      <div class="sol-desc">Multi-spectral computer vision on satellite imagery. Detects canopy change within hours and estimates area loss automatically.</div>
+      <div class="sol-metric">&lt;12h</div>
+      <div class="sol-metric-label">DETECTION SPEED</div>
+    </div>
+    <div class="sol-card reveal d3">
+      <span class="sol-icon">🏗️</span>
+      <div class="sol-title">Carbon Emission Tracker</div>
+      <div class="sol-desc">City-level emission scoring with atmospheric plume tracing. Generates actionable mitigation pathways per zone.</div>
+      <div class="sol-metric">1.2B</div>
+      <div class="sol-metric-label">TONS CO₂ TRACKED/YEAR</div>
+    </div>
+    <div class="sol-card reveal d4">
+      <span class="sol-icon">🌡️</span>
+      <div class="sol-title">Climate Event Predictor</div>
+      <div class="sol-desc">Cross-domain analysis of environmental metrics to predict extreme weather anomalies with 7-day advance warning.</div>
+      <div class="sol-metric">7-Day</div>
+      <div class="sol-metric-label">ADVANCE WARNING</div>
+    </div>
+    <div class="sol-card reveal d5">
+      <span class="sol-icon">🐚</span>
+      <div class="sol-title">Ocean Acidification Monitor</div>
+      <div class="sol-desc">Real-time sensing of pH, temperature, and salinity changes across major ocean basins. Coral health correlation engine.</div>
+      <div class="sol-metric">400K</div>
+      <div class="sol-metric-label">DATA POINTS/DAY</div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>

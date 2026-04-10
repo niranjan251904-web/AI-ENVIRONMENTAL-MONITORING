@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — Ocean Health Monitor</title>
+<meta name="description" content="Real-time ocean health monitoring: pH levels, temperature, salinity, dissolved oxygen, and coral bleaching risk across global ocean basins."/>
+<link rel="stylesheet" href="css/style.css"/>
+<style>
+.ocean-page { padding:120px 24px 80px; max-width:1100px; margin:0 auto; position:relative; z-index:2; }
+
+/* Region selector */
+.region-bar {
+  display:flex; gap:8px; flex-wrap:wrap; justify-content:center;
+  margin-bottom:40px;
+}
+.region-btn {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(16px);
+  border:1px solid rgba(91,184,245,0.15); border-radius:100px;
+  padding:10px 22px; font-family:var(--font-display); font-size:0.82rem;
+  font-weight:600; color:var(--muted); cursor:pointer;
+  transition:all 0.3s; outline:none;
+}
+.region-btn:hover { border-color:var(--cyan); color:var(--cyan-deep); }
+.region-btn.active {
+  background:linear-gradient(135deg,var(--cyan-deep),var(--cyan));
+  color:#fff; border-color:transparent;
+  box-shadow:0 4px 20px rgba(91,184,245,0.3);
+}
+
+/* Live metrics strip */
+.ocean-metrics {
+  display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+  margin-bottom:32px;
+}
+@media(max-width:800px){ .ocean-metrics{grid-template-columns:repeat(3,1fr)} }
+@media(max-width:500px){ .ocean-metrics{grid-template-columns:repeat(2,1fr)} }
+.metric-card {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(20px);
+  border:1px solid rgba(91,184,245,0.12); border-radius:20px;
+  padding:20px 16px; text-align:center; transition:all 0.3s;
+  position:relative; overflow:hidden;
+}
+.metric-card:hover { transform:translateY(-4px); box-shadow:0 16px 40px rgba(91,184,245,0.1); border-color:rgba(91,184,245,0.3); }
+.metric-icon { font-size:1.6rem; margin-bottom:8px; }
+.metric-value {
+  font-family:var(--font-mono); font-size:1.8rem; font-weight:700;
+  line-height:1; margin-bottom:4px;
+}
+.metric-value.danger { color:var(--red); }
+.metric-value.warn { color:var(--yellow); }
+.metric-value.safe { color:var(--green); }
+.metric-value.info { color:var(--cyan-deep); }
+.metric-label { font-size:0.68rem; color:var(--muted); font-family:var(--font-mono); letter-spacing:0.04em; }
+.metric-trend {
+  font-size:0.7rem; margin-top:6px; font-family:var(--font-mono);
+  display:flex; align-items:center; justify-content:center; gap:4px;
+}
+.metric-trend.up { color:var(--red); }
+.metric-trend.down { color:var(--green); }
+.metric-trend.stable { color:var(--muted); }
+
+/* Dashboard body */
+.ocean-body { display:grid; grid-template-columns:1fr 360px; gap:20px; margin-bottom:32px; }
+@media(max-width:860px){ .ocean-body{grid-template-columns:1fr} }
+
+/* Buoy map */
+.buoy-map-card {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(20px);
+  border:1px solid rgba(91,184,245,0.12); border-radius:24px;
+  padding:24px; overflow:hidden;
+}
+.buoy-map-title {
+  font-family:var(--font-display); font-weight:800; font-size:1rem;
+  color:var(--navy); margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.buoy-map-title .live-dot { width:8px; height:8px; background:var(--green); border-radius:50%; box-shadow:0 0 6px rgba(34,160,107,0.4); animation:pulse 2s infinite; }
+.buoy-map {
+  width:100%; height:320px; background:linear-gradient(135deg,#EAF4FB,#D6EDF8);
+  border-radius:16px; position:relative; overflow:hidden;
+  border:1px solid rgba(91,184,245,0.1);
+}
+.buoy-map svg { width:100%; height:100%; }
+.buoy-point {
+  cursor:pointer; transition:all 0.3s;
+}
+.buoy-point:hover circle { r:6; fill:var(--cyan-deep); }
+.buoy-tooltip {
+  display:none; position:absolute; background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(16px); border:1px solid rgba(91,184,245,0.2);
+  border-radius:14px; padding:14px 18px; font-size:0.78rem;
+  box-shadow:0 12px 32px rgba(0,0,0,0.08); z-index:10;
+  min-width:180px; pointer-events:none;
+}
+.buoy-tooltip.show { display:block; }
+.buoy-tooltip-name { font-family:var(--font-display); font-weight:800; color:var(--navy); margin-bottom:6px; }
+.buoy-tooltip-row { display:flex; justify-content:space-between; gap:12px; margin-bottom:3px; }
+.buoy-tooltip-label { color:var(--muted); }
+.buoy-tooltip-val { font-family:var(--font-mono); font-weight:700; color:var(--cyan-deep); }
+
+/* Sidebar panels */
+.ocean-sidebar { display:flex; flex-direction:column; gap:20px; }
+
+/* Coral risk */
+.coral-card {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(20px);
+  border:1px solid rgba(91,184,245,0.12); border-radius:24px;
+  padding:24px;
+}
+.coral-title { font-family:var(--font-display); font-weight:800; font-size:0.95rem; color:var(--navy); margin-bottom:16px; }
+.coral-gauge { text-align:center; margin-bottom:16px; }
+.coral-gauge svg { width:160px; height:100px; }
+.coral-status {
+  font-family:var(--font-mono); font-size:0.78rem; padding:6px 16px;
+  border-radius:100px; display:inline-block; font-weight:700;
+}
+.coral-status.critical { background:rgba(229,62,92,0.1); color:var(--red); }
+.coral-status.warning { background:rgba(212,160,23,0.1); color:var(--yellow); }
+.coral-status.healthy { background:rgba(34,160,107,0.08); color:var(--green); }
+.coral-detail { font-size:0.82rem; color:var(--muted); line-height:1.6; margin-top:12px; }
+
+/* pH trend chart */
+.ph-card {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(20px);
+  border:1px solid rgba(91,184,245,0.12); border-radius:24px;
+  padding:24px;
+}
+.ph-title { font-family:var(--font-display); font-weight:800; font-size:0.95rem; color:var(--navy); margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; }
+.ph-chart { width:100%; height:140px; }
+
+/* Activity log */
+.activity-card {
+  background:rgba(255,255,255,0.6); backdrop-filter:blur(20px);
+  border:1px solid rgba(91,184,245,0.12); border-radius:24px;
+  padding:24px; margin-bottom:32px;
+}
+.activity-title { font-family:var(--font-display); font-weight:800; font-size:1rem; color:var(--navy); margin-bottom:16px; }
+.activity-list { list-style:none; }
+.activity-item {
+  display:flex; align-items:flex-start; gap:12px; padding:12px 0;
+  border-bottom:1px solid rgba(91,184,245,0.06);
+}
+.activity-item:last-child { border-bottom:none; }
+.activity-dot {
+  width:10px; height:10px; border-radius:50%; flex-shrink:0; margin-top:4px;
+}
+.activity-dot.critical { background:var(--red); box-shadow:0 0 6px rgba(229,62,92,0.4); }
+.activity-dot.warning { background:var(--yellow); box-shadow:0 0 6px rgba(212,160,23,0.4); }
+.activity-dot.info { background:var(--cyan); box-shadow:0 0 6px rgba(91,184,245,0.4); }
+.activity-text { font-size:0.82rem; color:var(--navy); line-height:1.5; }
+.activity-time { font-family:var(--font-mono); font-size:0.68rem; color:var(--muted); margin-top:3px; }
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<a href="features.html" class="back-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+  Back to Features
+</a><div class="ocean-page">
+  <!-- Header -->
+  <div style="text-align:center;margin-bottom:40px;">
+    <div class="section-label reveal" style="justify-content:center;">🌊 OCEAN HEALTH MONITOR</div>
+    <h1 class="section-title reveal d1">Real-Time Ocean<br><span style="color:var(--cyan)">Intelligence</span></h1>
+    <p class="section-sub reveal d2" style="margin:0 auto;">Live data from 400K+ subsurface sensors and satellite thermal imaging across major ocean basins.</p>
+  </div>
+
+  <!-- Region selector -->
+  <div class="region-bar reveal d3">
+    <button class="region-btn active" onclick="selectRegion(this,'all')">🌍 All Oceans</button>
+    <button class="region-btn" onclick="selectRegion(this,'pacific')">Pacific</button>
+    <button class="region-btn" onclick="selectRegion(this,'atlantic')">Atlantic</button>
+    <button class="region-btn" onclick="selectRegion(this,'indian')">Indian</button>
+    <button class="region-btn" onclick="selectRegion(this,'arctic')">Arctic</button>
+    <button class="region-btn" onclick="selectRegion(this,'southern')">Southern</button>
+  </div>
+
+  <!-- Live Metrics -->
+  <div class="ocean-metrics reveal d4">
+    <div class="metric-card">
+      <div class="metric-icon">🌡️</div>
+      <div class="metric-value info" id="mTemp">18.6°</div>
+      <div class="metric-label">SEA SURFACE TEMP</div>
+      <div class="metric-trend up" id="tTemp">↑ +0.3° this month</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">⚗️</div>
+      <div class="metric-value" id="mPH" style="color:var(--yellow)">8.04</div>
+      <div class="metric-label">OCEAN pH</div>
+      <div class="metric-trend down" id="tPH">↓ -0.02 this year</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">🧂</div>
+      <div class="metric-value info" id="mSal">34.8</div>
+      <div class="metric-label">SALINITY (PSU)</div>
+      <div class="metric-trend stable" id="tSal">→ Stable</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">💨</div>
+      <div class="metric-value safe" id="mDO">6.8</div>
+      <div class="metric-label">DISSOLVED O₂ (mg/L)</div>
+      <div class="metric-trend stable" id="tDO">→ Normal range</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon">🪸</div>
+      <div class="metric-value warn" id="mCoral">62%</div>
+      <div class="metric-label">CORAL HEALTH INDEX</div>
+      <div class="metric-trend down" id="tCoral">↓ -4% this quarter</div>
+    </div>
+  </div>
+
+  <!-- Dashboard body -->
+  <div class="ocean-body">
+    <!-- Buoy Map -->
+    <div class="buoy-map-card reveal">
+      <div class="buoy-map-title"><span class="live-dot"></span> Global Buoy Sensor Network</div>
+      <div class="buoy-map" id="buoyMap">
+        <svg viewBox="0 0 800 400" id="mapSvg">
+          <!-- Simplified world map outline -->
+          <rect fill="#D6EDF8" width="800" height="400" rx="12"/>
+          <!-- Continent shapes (simplified) -->
+          <path d="M120,80 L180,70 L200,90 L210,130 L190,180 L160,200 L130,190 L100,160 L90,120 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <path d="M300,50 L400,40 L450,60 L480,100 L500,160 L490,200 L440,220 L400,230 L350,200 L310,160 L290,120 L280,80 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <path d="M500,80 L600,60 L700,80 L740,120 L730,170 L680,200 L600,190 L550,160 L520,120 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <path d="M530,200 L600,210 L650,250 L640,300 L580,320 L540,280 L520,240 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <path d="M150,220 L220,210 L260,240 L250,320 L200,360 L160,340 L140,280 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <path d="M620,320 L720,300 L760,330 L740,370 L660,380 L620,360 Z" fill="#E8F3F9" stroke="rgba(91,184,245,0.2)" stroke-width="1"/>
+          <!-- Grid lines -->
+          <line x1="0" y1="200" x2="800" y2="200" stroke="rgba(91,184,245,0.08)" stroke-dasharray="4,4"/>
+          <line x1="400" y1="0" x2="400" y2="400" stroke="rgba(91,184,245,0.08)" stroke-dasharray="4,4"/>
+          <!-- Buoy points -->
+          <g class="buoy-point" data-name="Great Barrier Reef" data-ph="7.78" data-temp="27.2" data-sal="35.1" data-do="5.8" data-status="critical" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="680" cy="280" r="4" fill="#E53E5C" opacity="0.8"><animate attributeName="r" values="4;7;4" dur="2s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="North Atlantic Gyre" data-ph="8.12" data-temp="16.3" data-sal="35.4" data-do="7.2" data-status="safe" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="280" cy="120" r="4" fill="#22A06B" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="3s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Coral Triangle" data-ph="7.92" data-temp="29.1" data-sal="33.8" data-do="6.1" data-status="warning" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="640" cy="220" r="4" fill="#D4A017" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2.5s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Caribbean Sea" data-ph="8.08" data-temp="26.8" data-sal="36.2" data-do="6.5" data-status="safe" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="200" cy="170" r="4" fill="#22A06B" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2.8s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Bay of Bengal" data-ph="7.96" data-temp="28.4" data-sal="32.5" data-do="5.9" data-status="warning" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="570" cy="180" r="4" fill="#D4A017" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2.2s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Southern Ocean" data-ph="8.15" data-temp="2.1" data-sal="34.6" data-do="8.4" data-status="safe" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="400" cy="375" r="4" fill="#22A06B" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="3.2s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Arctic Basin" data-ph="8.18" data-temp="-1.2" data-sal="33.0" data-do="9.1" data-status="safe" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="400" cy="25" r="4" fill="#5BB8F5" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="3.5s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="East Pacific Rise" data-ph="7.85" data-temp="22.6" data-sal="34.9" data-do="5.4" data-status="warning" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="100" cy="200" r="4" fill="#D4A017" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2.6s" repeatCount="indefinite"/></circle>
+          </g>
+          <g class="buoy-point" data-name="Mediterranean" data-ph="8.06" data-temp="21.5" data-sal="38.4" data-do="6.7" data-status="safe" onmouseenter="showBuoy(this,event)" onmouseleave="hideBuoy()">
+            <circle cx="380" cy="110" r="4" fill="#22A06B" opacity="0.8"><animate attributeName="r" values="4;6;4" dur="2.9s" repeatCount="indefinite"/></circle>
+          </g>
+        </svg>
+        <div class="buoy-tooltip" id="buoyTooltip"></div>
+      </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="ocean-sidebar">
+      <!-- Coral Bleaching Risk -->
+      <div class="coral-card reveal d1">
+        <div class="coral-title">🪸 Coral Bleaching Risk</div>
+        <div class="coral-gauge">
+          <svg viewBox="0 0 160 100" id="coralGauge">
+            <path d="M20,90 A60,60 0 0,1 140,90" fill="none" stroke="rgba(91,184,245,0.1)" stroke-width="10" stroke-linecap="round"/>
+            <path d="M20,90 A60,60 0 0,1 140,90" fill="none" stroke="url(#coralGrad)" stroke-width="10" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="75" id="coralArc"/>
+            <defs><linearGradient id="coralGrad"><stop offset="0%" stop-color="#22A06B"/><stop offset="50%" stop-color="#D4A017"/><stop offset="100%" stop-color="#E53E5C"/></linearGradient></defs>
+            <text x="80" y="75" text-anchor="middle" font-family="var(--font-mono)" font-size="22" font-weight="700" fill="#E53E5C" id="coralPct">68%</text>
+            <text x="80" y="92" text-anchor="middle" font-family="var(--font-mono)" font-size="8" fill="rgba(13,27,42,0.4)">RISK LEVEL</text>
+          </svg>
+        </div>
+        <div style="text-align:center;"><span class="coral-status critical" id="coralStatus">HIGH RISK</span></div>
+        <div class="coral-detail" id="coralDetail">Great Barrier Reef subsurface pH at 7.78 — below coral survival threshold. Mass bleaching predicted within 14 days if temperatures hold.</div>
+      </div>
+
+      <!-- pH Trend -->
+      <div class="ph-card reveal d2">
+        <div class="ph-title">
+          <span>📉 pH Trend (12 months)</span>
+          <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--muted);">LIVE</span>
+        </div>
+        <svg class="ph-chart" viewBox="0 0 320 140" id="phChart">
+          <defs>
+            <linearGradient id="phFill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="rgba(91,184,245,0.3)"/>
+              <stop offset="100%" stop-color="rgba(91,184,245,0)"/>
+            </linearGradient>
+          </defs>
+          <!-- Grid -->
+          <line x1="30" y1="10" x2="30" y2="120" stroke="rgba(91,184,245,0.1)"/>
+          <line x1="30" y1="120" x2="310" y2="120" stroke="rgba(91,184,245,0.1)"/>
+          <text x="8" y="17" font-size="7" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">8.20</text>
+          <text x="8" y="65" font-size="7" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">8.10</text>
+          <text x="8" y="117" font-size="7" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">8.00</text>
+          <!-- Danger zone -->
+          <rect x="30" y="95" width="280" height="25" fill="rgba(229,62,92,0.05)"/>
+          <text x="35" y="115" font-size="6" fill="rgba(229,62,92,0.4)" font-family="var(--font-mono)">CORAL STRESS ZONE</text>
+          <!-- pH Line -->
+          <polyline id="phLine" fill="none" stroke="var(--cyan-deep)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+            points="30,20 55,22 80,28 105,25 130,35 155,40 180,38 205,48 230,52 255,50 280,58 305,62"/>
+          <!-- Fill area -->
+          <polygon id="phArea" fill="url(#phFill)"
+            points="30,20 55,22 80,28 105,25 130,35 155,40 180,38 205,48 230,52 255,50 280,58 305,62 305,120 30,120"/>
+          <!-- Current dot -->
+          <circle cx="305" cy="62" r="4" fill="var(--cyan-deep)"><animate attributeName="r" values="4;6;4" dur="2s" repeatCount="indefinite"/></circle>
+          <!-- Month labels -->
+          <text x="30" y="135" font-size="6" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">Jan</text>
+          <text x="130" y="135" font-size="6" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">May</text>
+          <text x="230" y="135" font-size="6" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">Sep</text>
+          <text x="295" y="135" font-size="6" fill="rgba(13,27,42,0.3)" font-family="var(--font-mono)">Now</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <!-- Activity Log -->
+  <div class="activity-card reveal">
+    <div class="activity-title">📡 Live Sensor Activity</div>
+    <ul class="activity-list" id="activityLog">
+      <li class="activity-item">
+        <div class="activity-dot critical"></div>
+        <div>
+          <div class="activity-text"><strong>CRITICAL:</strong> pH dropped to 7.78 in Great Barrier Reef Zone C — 120km² area below coral survival threshold</div>
+          <div class="activity-time">⏱ 3 min ago — Buoy AUS-GBR-07</div>
+        </div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-dot warning"></div>
+        <div>
+          <div class="activity-text"><strong>WARNING:</strong> Sea surface temperature anomaly +2.1°C in Coral Triangle sector — bleaching conditions developing</div>
+          <div class="activity-time">⏱ 12 min ago — Satellite MODIS-Aqua</div>
+        </div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-dot info"></div>
+        <div>
+          <div class="activity-text">Dissolved oxygen recovery detected in North Atlantic Gyre — 7.2 mg/L (normal range restored after algal bloom subsided)</div>
+          <div class="activity-time">⏱ 28 min ago — Buoy ATL-NA-14</div>
+        </div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-dot warning"></div>
+        <div>
+          <div class="activity-text"><strong>WARNING:</strong> Salinity drop to 30.2 PSU near Bay of Bengal — freshwater influx from monsoon runoff detected</div>
+          <div class="activity-time">⏱ 45 min ago — Buoy IND-BOB-03</div>
+        </div>
+      </li>
+      <li class="activity-item">
+        <div class="activity-dot info"></div>
+        <div>
+          <div class="activity-text">Arctic Basin buoy network reporting nominal — pH 8.18, Temp -1.2°C. Sea ice extent within seasonal norms</div>
+          <div class="activity-time">⏱ 1 hr ago — Buoy ARC-BASIN-01</div>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- AI Ocean Health Chatbot -->
+  <div style="background:rgba(255,255,255,0.7); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px); border:1px solid rgba(91,184,245,0.2); border-radius:24px; padding:24px; box-shadow:0 8px 32px rgba(0,0,0,0.05); margin-bottom:32px;">
+    <div style="text-align:center; margin-bottom:20px;">
+      <div style="font-family:var(--font-display); font-weight:900; font-size:1.2rem; color:var(--navy); margin-bottom:8px;">🤖 AI Ocean Health Assistant</div>
+      <div style="color:var(--muted); font-size:0.85rem; line-height:1.6;">Ask our AI about ocean conditions, coral bleaching predictions, pH trends, and marine ecosystem health.</div>
+    </div>
+    <div style="border-radius:16px; overflow:hidden; border:1px solid rgba(91,184,245,0.15);">
+      <iframe
+        src="https://workflow.getmindpal.com/ocean-health-monitoring-ai-workflow-1775779611974"
+        allow="clipboard-read; clipboard-write; microphone"
+        style="width: 100%; height: 100%; min-height: 750px; border: none; display: block;"
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+<script>
+// ══════════════════════════════════
+// OCEAN HEALTH MONITOR ENGINE
+// ══════════════════════════════════
+
+// Region data
+const regionData = {
+  all:     { temp:'18.6°', ph:'8.04', sal:'34.8', do:'6.8', coral:'62%', tTemp:'↑ +0.3°', tPH:'↓ -0.02', tSal:'→ Stable', tDO:'→ Normal', tCoral:'↓ -4%', coralRisk:68, coralClass:'critical', coralLabel:'HIGH RISK', coralMsg:'Great Barrier Reef subsurface pH at 7.78 — below coral survival threshold. Mass bleaching predicted within 14 days.' },
+  pacific: { temp:'22.4°', ph:'7.95', sal:'34.2', do:'6.1', coral:'54%', tTemp:'↑ +0.5°', tPH:'↓ -0.03', tSal:'↓ -0.2', tDO:'↓ Declining', tCoral:'↓ -6%', coralRisk:78, coralClass:'critical', coralLabel:'SEVERE RISK', coralMsg:'Coral Triangle and East Pacific zones experiencing sustained thermal stress. Acidification accelerating.' },
+  atlantic:{ temp:'16.3°', ph:'8.12', sal:'35.4', do:'7.2', coral:'78%', tTemp:'↑ +0.2°', tPH:'→ Stable', tSal:'→ Stable', tDO:'↑ Recovering', tCoral:'→ Stable', coralRisk:32, coralClass:'warning', coralLabel:'MODERATE', coralMsg:'North Atlantic conditions stable. Caribbean reefs showing seasonal stress but within recovery parameters.' },
+  indian:  { temp:'28.4°', ph:'7.96', sal:'32.5', do:'5.9', coral:'58%', tTemp:'↑ +0.4°', tPH:'↓ -0.02', tSal:'↓ -1.8', tDO:'↓ Low', tCoral:'↓ -5%', coralRisk:72, coralClass:'critical', coralLabel:'HIGH RISK', coralMsg:'Monsoon runoff causing salinity drops and nutrient loading. Dissolved oxygen below optimal for reef ecosystems.' },
+  arctic:  { temp:'-1.2°', ph:'8.18', sal:'33.0', do:'9.1', coral:'—', tTemp:'↑ +1.1°', tPH:'→ Stable', tSal:'→ Normal', tDO:'→ High', tCoral:'N/A', coralRisk:5, coralClass:'healthy', coralLabel:'NOMINAL', coralMsg:'Arctic basin within seasonal parameters. Sea ice extent tracking predictions. No anomalies detected.' },
+  southern:{ temp:'2.1°', ph:'8.15', sal:'34.6', do:'8.4', coral:'—', tTemp:'↑ +0.2°', tPH:'→ Stable', tSal:'→ Normal', tDO:'→ Normal', tCoral:'N/A', coralRisk:10, coralClass:'healthy', coralLabel:'HEALTHY', coralMsg:'Southern Ocean circumpolar current stable. High dissolved oxygen levels supporting krill and whale populations.' },
+};
+
+function selectRegion(btn, region){
+  document.querySelectorAll('.region-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d = regionData[region];
+  // Update metrics
+  document.getElementById('mTemp').textContent = d.temp;
+  document.getElementById('mPH').textContent = d.ph;
+  document.getElementById('mSal').textContent = d.sal;
+  document.getElementById('mDO').textContent = d.do;
+  document.getElementById('mCoral').textContent = d.coral;
+  document.getElementById('tTemp').textContent = d.tTemp;
+  document.getElementById('tPH').textContent = d.tPH;
+  document.getElementById('tSal').textContent = d.tSal;
+  document.getElementById('tDO').textContent = d.tDO;
+  document.getElementById('tCoral').textContent = d.tCoral;
+  // Coral gauge
+  const offset = 188 - (d.coralRisk/100)*188;
+  document.getElementById('coralArc').setAttribute('stroke-dashoffset', offset);
+  document.getElementById('coralPct').textContent = d.coralRisk+'%';
+  const statusEl = document.getElementById('coralStatus');
+  statusEl.textContent = d.coralLabel;
+  statusEl.className = 'coral-status '+d.coralClass;
+  document.getElementById('coralDetail').textContent = d.coralMsg;
+  const pctEl = document.getElementById('coralPct');
+  pctEl.setAttribute('fill', d.coralClass==='critical'?'#E53E5C':d.coralClass==='warning'?'#D4A017':'#22A06B');
+}
+
+// Buoy tooltip
+function showBuoy(el, event){
+  const rect = document.getElementById('buoyMap').getBoundingClientRect();
+  const tt = document.getElementById('buoyTooltip');
+  const name = el.dataset.name;
+  const statusColors = {critical:'#E53E5C', warning:'#D4A017', safe:'#22A06B'};
+  tt.innerHTML = `
+    <div class="buoy-tooltip-name">${name}</div>
+    <div class="buoy-tooltip-row"><span class="buoy-tooltip-label">pH</span><span class="buoy-tooltip-val">${el.dataset.ph}</span></div>
+    <div class="buoy-tooltip-row"><span class="buoy-tooltip-label">Temp</span><span class="buoy-tooltip-val">${el.dataset.temp}°C</span></div>
+    <div class="buoy-tooltip-row"><span class="buoy-tooltip-label">Salinity</span><span class="buoy-tooltip-val">${el.dataset.sal} PSU</span></div>
+    <div class="buoy-tooltip-row"><span class="buoy-tooltip-label">DO</span><span class="buoy-tooltip-val">${el.dataset.do} mg/L</span></div>
+  `;
+  const x = event.clientX - rect.left + 12;
+  const y = event.clientY - rect.top - 10;
+  tt.style.left = x+'px';
+  tt.style.top = y+'px';
+  tt.classList.add('show');
+}
+function hideBuoy(){ document.getElementById('buoyTooltip').classList.remove('show'); }
+
+// Live data simulation — update metrics periodically
+setInterval(()=>{
+  const tempEl = document.getElementById('mTemp');
+  const phEl = document.getElementById('mPH');
+  const baseTemp = parseFloat(tempEl.textContent);
+  const basePH = parseFloat(phEl.textContent);
+  if(!isNaN(baseTemp)){
+    const newTemp = (baseTemp + (Math.random()-0.5)*0.2).toFixed(1);
+    tempEl.textContent = newTemp+'°';
+  }
+  if(!isNaN(basePH)){
+    const newPH = (basePH + (Math.random()-0.5)*0.01).toFixed(2);
+    phEl.textContent = newPH;
+  }
+}, 5000);
+</script>
+</body>
+</html>

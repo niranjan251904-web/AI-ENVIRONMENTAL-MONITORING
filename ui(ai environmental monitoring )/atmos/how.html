@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — How It Works</title>
+<meta name="description" content="Learn how ATMOS processes environmental data through its 4-step intelligence loop: Sense, Analyze, Predict, Act."/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html" class="active">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="how">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;padding:0 0 20px;">
+    <div class="section-label reveal" style="justify-content:center;">INTELLIGENCE LOOP</div>
+    <h2 class="section-title reveal d1">Four Steps to<br><span style="color:var(--cyan)">Planetary Protection</span></h2>
+    <p class="section-sub reveal d2" style="margin:0 auto 72px;">From raw sensor data to life-saving action — our pipeline processes everything in under 200ms.</p>
+  </div>
+  <div class="how-grid">
+    <div class="how-step reveal">
+      <div class="step-num">1</div>
+      <div class="step-title">🔬 Sense</div>
+      <div class="step-desc">2.3M+ IoT sensors, satellite constellations, and ocean buoys continuously stream environmental data — PM2.5, CO₂, pH, temperature, wind, and 40+ other metrics — into our ingestion layer at 400TB/day.</div>
+    </div>
+    <div class="how-step reveal d1">
+      <div class="step-num">2</div>
+      <div class="step-title">🧠 Analyze</div>
+      <div class="step-desc">Multi-modal AI models (LSTM, Transformer, Graph Neural Networks) cross-reference sensor streams with meteorological data, historical patterns, and satellite imagery in real-time.</div>
+    </div>
+    <div class="how-step reveal d2">
+      <div class="step-num">3</div>
+      <div class="step-title">🔮 Predict</div>
+      <div class="step-desc">Probabilistic forecasting engine generates environmental predictions up to 7 days ahead. Extreme event detection runs 24/7 with sub-200ms response latency across the entire sensor grid.</div>
+    </div>
+    <div class="how-step reveal d3">
+      <div class="step-num">4</div>
+      <div class="step-title">🛡️ Act</div>
+      <div class="step-desc">Automated alert dispatch to government agencies, NGOs, and 1.2B+ citizens via push notifications. Generates localized mitigation playbooks and compliance reports for each affected zone.</div>
+    </div>
+  </div>
+
+  <!-- CTA at bottom -->
+  <div style="max-width:900px; margin:80px auto 0;">
+    <div class="liquid-glass impact-card reveal">
+      <div class="section-label" style="justify-content:center;">GREENSOFTTECH HACKATHON 2025</div>
+      <h2 class="section-title" style="text-align:center;font-size:clamp(1.8rem,4vw,3rem);">How can AI provide critical tools<br>for monitoring <span style="color:var(--cyan)">environmental changes?</span></h2>
+      <p class="section-sub" style="text-align:center;margin:0 auto 0;">ATMOS is our answer. A unified intelligence layer that doesn't just display data — it predicts crises and prescribes localized mitigation pathways before irreversible damage occurs.</p>
+      <a href="dashboard.html" class="impact-cta">🌍 View Live Dashboard</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>

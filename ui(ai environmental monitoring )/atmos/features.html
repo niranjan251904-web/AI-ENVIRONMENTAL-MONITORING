@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ATMOS — Features</title>
+<meta name="description" content="ATMOS capabilities: Air Quality Intelligence, Ocean Health, Deforestation Alerts, Carbon Footprint AI, and Climate Event Forecasting."/>
+<link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
+<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+<nav id="mainNav">
+  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+  <ul class="nav-links">
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="dashboard.html">Dashboard</a></li>
+    <li><a href="solutions.html">Solutions</a></li>
+    <li><a href="alerts.html">Alerts</a></li>
+    <li><a href="how.html">How It Works</a></li>
+  </ul>
+  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="features">
+  <div style="max-width:1100px;margin:0 auto;text-align:center;padding:0 0 20px;">
+    <div class="section-label reveal" style="justify-content:center;">CAPABILITIES</div>
+    <h2 class="section-title reveal d1">Planetary Intelligence<br><span style="color:var(--cyan)">at Scale</span></h2>
+    <p class="section-sub reveal d2" style="margin:0 auto 72px;">From satellite imagery to IoT sensor arrays — our AI processes 400TB+/day to deliver actionable environmental intelligence.</p>
+  </div>
+  <div class="features-grid">
+    <a href="air-quality.html" style="text-decoration:none;color:inherit;grid-column:span 2;" class="feat-card-link">
+    <div class="feat-card featured reveal" style="cursor:pointer;">
+      <div class="feat-icon">🌬️</div>
+      <div class="feat-title">Air Quality Intelligence</div>
+      <div class="feat-desc">Real-time AQI prediction across 147 countries. Our ML models analyze PM2.5, PM10, NO₂, SO₂, O₃, and CO concentrations from 2.3 million sensor nodes — delivering hyperlocal air quality forecasts up to 7 days ahead with 98.4% accuracy.</div>
+      <span class="feat-tag">LSTM + Transformer</span>
+      <span class="feat-tag" style="margin-left:6px;">Try it →</span>
+    </div>
+    </a>
+    <a href="ocean-health.html" style="text-decoration:none;color:inherit;">
+    <div class="feat-card reveal d1" style="cursor:pointer;">
+      <div class="feat-icon">🌊</div>
+      <div class="feat-title">Ocean Health Monitor</div>
+      <div class="feat-desc">Temperature, pH, and acidification tracking across major ocean bodies. 400k+ subsurface data points per day correlated with satellite thermal imaging.</div>
+      <span class="feat-tag">400k+ pts/day</span>
+      <span class="feat-tag" style="margin-left:6px;">Monitor →</span>
+    </div>
+    </a>
+    <a href="deforestation-alerts.html" style="text-decoration:none;color:inherit;">
+    <div class="feat-card reveal d2" style="cursor:pointer;">
+      <div class="feat-icon">🌲</div>
+      <div class="feat-title">Deforestation Alerts</div>
+      <div class="feat-desc">Computer vision on multi-spectral satellite imagery detects canopy loss within hours. Automatic area estimation and illegal logging pattern recognition.</div>
+      <span class="feat-tag">&lt;12h Detection</span>
+      <span class="feat-tag" style="margin-left:6px;">Alerts →</span>
+    </div>
+    </a>
+
+    <a href="climate-forecast.html" style="text-decoration:none;color:inherit;">
+    <div class="feat-card reveal d4" style="cursor:pointer;">
+      <div class="feat-icon">⚡</div>
+      <div class="feat-title">Climate Event Forecaster</div>
+      <div class="feat-desc">Cross-domain environmental metric analysis predicts extreme weather anomalies. Early warning system with 7-day advance notification capability.</div>
+      <span class="feat-tag">7-Day Warning</span>
+      <span class="feat-tag" style="margin-left:6px;">Forecast →</span>
+    </div>
+    </a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
+  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
+  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+  <div class="footer-watermark">ATMOS</div>
+</footer>
+<script src="js/main.js"></script>
+</body>
+</html>
