@@ -424,20 +424,177 @@ footer { border-top:1px solid rgba(91,184,245,0.1); padding:56px 24px 40px; text
 .mobile-nav a { font-family:var(--font-display); font-size:1.8rem; font-weight:800; color:var(--navy); text-decoration:none; transition:color 0.2s; letter-spacing:-0.02em; }
 .mobile-nav a:hover { color:var(--cyan-deep); }
 
-/* ── RESPONSIVE ── */
-@media(max-width:768px){
-  .nav-links,.nav-cta{display:none}
-  .nav-hamburger{display:flex}
-  .summary-bar{grid-template-columns:repeat(2,1fr)}
-  .aqi-row{grid-template-columns:1fr auto}
-  .city-coord,.aqi-trend{display:none}
-  .stat-item{padding:0 18px}
-  .stat-num{font-size:1.6rem}
-  nav{top:12px;width:calc(100% - 24px);padding:12px 20px}
+/* ── RESPONSIVE — MOBILE FIRST + DESKTOP OPTIMIZED ── */
+
+/* ═══ EXTRA SMALL (≤ 380px) ═══ */
+@media(max-width:380px){
+  nav { padding:10px 14px; top:8px; width:calc(100% - 16px); border-radius:16px; }
+  .nav-logo { font-size:1rem; letter-spacing:0.15em; }
+  .section-title { font-size:clamp(1.6rem,6vw,2.2rem); }
+  .section-sub { font-size:0.9rem; margin-bottom:40px; }
+  .hero-title { font-size:clamp(2.4rem,10vw,3.5rem); }
+  .hero-sub { font-size:0.9rem; }
+  .stat-item { padding:0 8px; }
+  .stat-num { font-size:1.3rem; }
+  .stat-label { font-size:0.6rem; }
+  .summary-bar { grid-template-columns:1fr; gap:10px; }
+  .summary-num { font-size:1.8rem; }
+  .hero-actions { flex-direction:column; align-items:center; }
+  .btn-primary,.btn-secondary { width:100%; max-width:300px; justify-content:center; font-size:0.85rem; padding:14px 24px; }
+  footer { padding:36px 16px 28px; }
+  .footer-logo { font-size:1.3rem; }
+  .footer-watermark { font-size:clamp(50px,12vw,80px); }
+  .footer-links { gap:14px; }
+  .footer-links a { font-size:0.75rem; }
+  .footer-tags { gap:5px; }
+  .footer-tag { font-size:0.6rem; padding:3px 8px; }
 }
+
+/* ═══ SMALL MOBILE (≤ 480px) ═══ */
 @media(max-width:480px){
-  .stat-item{padding:0 12px}
-  .summary-bar{gap:10px}
-  .hero-actions{flex-direction:column;align-items:center}
-  .btn-primary,.btn-secondary{width:100%;max-width:320px;justify-content:center}
+  .nav-links,.nav-cta { display:none; }
+  .nav-hamburger { display:flex; }
+  nav { top:10px; width:calc(100% - 20px); padding:11px 16px; }
+
+  /* Hero */
+  .hero-actions { flex-direction:column; align-items:center; }
+  .btn-primary,.btn-secondary { width:100%; max-width:320px; justify-content:center; }
+  .stats-strip { gap:0; }
+  .stat-item { padding:0 12px; }
+  .stat-num { font-size:1.4rem; }
+
+  /* Features */
+  .features-grid { grid-template-columns:1fr; gap:14px; }
+  .feat-card.featured { grid-column:span 1; }
+  .feat-card { padding:24px 20px; border-radius:20px; }
+  .feat-icon { width:44px; height:44px; font-size:1.2rem; }
+
+  /* Dashboard */
+  .summary-bar { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .summary-num { font-size:1.8rem; }
+  .dashboard-body { grid-template-columns:1fr; }
+  .aqi-row { grid-template-columns:1fr auto; gap:10px; padding:12px 16px; }
+  .city-coord,.aqi-trend { display:none; }
+
+  /* Solutions */
+  .solutions-grid { grid-template-columns:1fr; }
+
+  /* How it works */
+  .how-grid { grid-template-columns:1fr; gap:12px; }
+
+  /* Alerts */
+  .alert-card { padding:14px 16px; gap:12px; border-radius:14px; }
+  .alert-body { font-size:0.78rem; }
+  .alerts-header { flex-direction:column; align-items:flex-start; }
+  .toggle-row { gap:12px; flex-wrap:wrap; }
+
+  /* Ocean Health */
+  .ocean-metrics { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .metric-card { padding:14px 10px; border-radius:16px; }
+  .metric-value { font-size:1.4rem; }
+  .ocean-body { grid-template-columns:1fr; }
+  .buoy-map { height:220px; }
+
+  /* Air Quality */
+  .upload-zone { grid-template-columns:1fr; gap:14px; }
+  .upload-card { padding:32px 20px; border-radius:18px; }
+  .preview-img { max-height:260px; }
+  .preview-video { max-height:260px; }
+  .preview-actions { flex-direction:column; align-items:center; gap:10px; }
+  .btn-analyze,.btn-capture,.btn-clear { width:100%; max-width:300px; justify-content:center; }
+  .results-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
+  .results-title { font-size:1rem; }
+  .aqi-score { font-size:1.8rem; padding:6px 16px; }
+
+  /* Back button */
+  .back-btn { top:72px; left:12px; padding:8px 14px; font-size:0.75rem; border-radius:12px; }
+  .back-btn svg { width:14px; height:14px; }
+
+  /* Footer */
+  .footer-watermark { font-size:clamp(60px,14vw,100px); }
+  .footer-sub { font-size:0.78rem; }
+
+  /* MindPal iframes */
+  .mindpal-container iframe,
+  #mindpalWrapper iframe { min-height:500px !important; }
 }
+
+/* ═══ TABLET (481px – 768px) ═══ */
+@media(min-width:481px) and (max-width:768px){
+  .nav-links,.nav-cta { display:none; }
+  .nav-hamburger { display:flex; }
+  nav { top:12px; width:calc(100% - 24px); padding:12px 20px; }
+
+  .summary-bar { grid-template-columns:repeat(2,1fr); }
+  .dashboard-body { grid-template-columns:1fr; }
+  .aqi-row { grid-template-columns:1fr auto; }
+  .city-coord,.aqi-trend { display:none; }
+  .stat-item { padding:0 18px; }
+  .stat-num { font-size:1.6rem; }
+
+  .features-grid { grid-template-columns:repeat(2,1fr); }
+  .feat-card.featured { grid-column:span 2; }
+
+  .solutions-grid { grid-template-columns:repeat(2,1fr); }
+  .how-grid { grid-template-columns:repeat(2,1fr); }
+
+  .ocean-metrics { grid-template-columns:repeat(3,1fr); }
+  .ocean-body { grid-template-columns:1fr; }
+
+  .upload-zone { grid-template-columns:1fr 1fr; }
+  .results-grid { grid-template-columns:repeat(3,1fr); }
+
+  .back-btn { top:80px; }
+
+  .footer-watermark { font-size:clamp(80px,14vw,130px); }
+}
+
+/* ═══ SMALL DESKTOP / LARGE TABLET (769px – 1024px) ═══ */
+@media(min-width:769px) and (max-width:1024px){
+  nav { max-width:880px; padding:14px 24px; }
+  .nav-links { gap:20px; }
+  .nav-links a { font-size:0.8rem; }
+  .nav-cta { padding:9px 18px; font-size:0.78rem; }
+
+  .features-grid { grid-template-columns:repeat(2,1fr); }
+  .feat-card.featured { grid-column:span 2; }
+
+  .summary-bar { grid-template-columns:repeat(4,1fr); gap:12px; }
+  .dashboard-body { grid-template-columns:1fr 280px; }
+
+  .solutions-grid { grid-template-columns:repeat(2,1fr); }
+  .how-grid { grid-template-columns:repeat(2,1fr); }
+
+  .ocean-metrics { grid-template-columns:repeat(5,1fr); gap:10px; }
+  .ocean-body { grid-template-columns:1fr 320px; }
+}
+
+/* ═══ LARGE DESKTOP (≥ 1025px) ═══ */
+@media(min-width:1025px){
+  .features-grid { grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); }
+  .summary-bar { grid-template-columns:repeat(4,1fr); }
+  .dashboard-body { grid-template-columns:1fr 320px; }
+  .solutions-grid { grid-template-columns:repeat(3,1fr); }
+  .how-grid { grid-template-columns:repeat(4,1fr); }
+  .ocean-metrics { grid-template-columns:repeat(5,1fr); }
+  .ocean-body { grid-template-columns:1fr 360px; }
+}
+
+/* ═══ TOUCH DEVICE OPTIMIZATIONS ═══ */
+@media(hover:none){
+  .feat-card:hover { transform:none; box-shadow:none; }
+  .feat-card:active { transform:scale(0.98); }
+  .summary-card:hover { transform:none; }
+  .sol-card:hover { transform:none; }
+  .metric-card:hover { transform:none; }
+  .alert-card:hover { transform:none; }
+}
+
+/* ═══ SAFE AREA INSETS (notched phones) ═══ */
+@supports(padding: env(safe-area-inset-top)){
+  nav { top:calc(12px + env(safe-area-inset-top)); }
+  .back-btn { top:calc(72px + env(safe-area-inset-top)); }
+  footer { padding-bottom:calc(28px + env(safe-area-inset-bottom)); }
+  .mobile-nav { padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
+}
+
