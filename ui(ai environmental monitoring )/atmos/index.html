@@ -6,6 +6,8 @@
 <title>ATMOS — AI for a Breathing Planet</title>
 <meta name="description" content="AI-powered environmental monitoring platform. Monitor air quality, predict pollution events, and protect communities with real-time planetary intelligence."/>
 <link rel="stylesheet" href="css/style.css"/>
+<!-- Lenis Smooth Scroll -->
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
 <style>
 /* ── FULLPAGE SCROLL SEQUENCE ── */
 /* The entire page IS the scroll trigger — frame image is fixed background */
@@ -14,6 +16,8 @@
   width:100%; height:100%;
   object-fit:cover;
   pointer-events:none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
 }
 
 /* Spacer sections create scrollable height — 80 frames mapped across total page */
@@ -311,26 +315,34 @@ body::before { display:none !important; }
   // In-memory image cache — prevents re-downloading
   const cache = new Array(TOTAL);
 
-  // Phase 1: Load first 5 frames IMMEDIATELY (hero visible area)
+  // Phase 1: Load first 5 frames IMMEDIATELY
   const PRIORITY_COUNT = 5;
   for(let i = 0; i < PRIORITY_COUNT && i < TOTAL; i++){
     const img = new Image();
     img.src = srcs[i];
-    cache[i] = img;
+    img.decode().then(() => {
+      cache[i] = img;
+      if (i === 0) drawFrame(0);
+    }).catch(() => { cache[i] = img; });
   }
 
-  // Phase 2: Load the rest in small batches (non-blocking)
+  // Phase 2: Load the rest in batches with pre-decoding
   let loadIndex = PRIORITY_COUNT;
   function loadBatch(){
-    const BATCH = 6;
+    const BATCH = 4;
+    const promises = [];
     for(let b = 0; b < BATCH && loadIndex < TOTAL; b++, loadIndex++){
+      const currentIdx = loadIndex;
       const img = new Image();
-      img.src = srcs[loadIndex];
-      cache[loadIndex] = img;
+      img.src = srcs[currentIdx];
+      const p = img.decode()
+        .then(() => { cache[currentIdx] = img; })
+        .catch(() => { cache[currentIdx] = img; });
+      promises.push(p);
     }
-    if(loadIndex < TOTAL){
-      setTimeout(loadBatch, 150); // Small delay between batches
-    }
+    Promise.allSettled(promises).then(() => {
+      if(loadIndex < TOTAL) setTimeout(loadBatch, 50);
+    });
   }
   // Start lazy batch loading after first paint
   if('requestIdleCallback' in window){
@@ -349,15 +361,24 @@ body::before { display:none !important; }
   }, { threshold:0.3 });
   panels.forEach(p=>observer.observe(p));
 
-  // Scroll handler — throttled with rAF
+  // Initialize Lenis
+  const lenis = new Lenis({
+    lerp: 0.1,
+    wheelMultiplier: 1.1,
+    gestureOrientation: 'vertical',
+    normalizeWheel: true,
+    smoothWheel: true
+  });
+
+  // Scroll handler — throttled with rAF + Lerp
   let lastFi = -1;
-  let ticking = false;
+  let targetFi = 0;
+  let currentFi = 0;
   const ctx = canvas.getContext('2d', { alpha: false });
 
   function drawFrame(idx) {
     const img = cache[idx];
     if (img && img.complete) {
-      // Maintaining aspect ratio (cover)
       const canvasRatio = canvas.width / canvas.height;
       const imgRatio = img.width / img.height;
       let drawW, drawH, drawX, drawY;
@@ -385,37 +406,35 @@ body::before { display:none !important; }
   window.addEventListener('resize', resizeCanvas);
   resizeCanvas();
 
-  function update(){
-    const scrollY = window.scrollY;
-    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-    if(maxScroll <= 0) {
-      ticking = false;
-      return;
-    }
-    const progress = Math.min(1, scrollY / maxScroll);
-    const fi = Math.min(TOTAL-1, Math.floor(progress * TOTAL));
+  function ticker(time) {
+    lenis.raf(time);
+    
+    // Smoothly interpolate the frame index (Lerp)
+    currentFi += (targetFi - currentFi) * 0.15;
+    const fi = Math.round(currentFi);
 
     if(fi !== lastFi){
       lastFi = fi;
       drawFrame(fi);
     }
+    requestAnimationFrame(ticker);
+  }
+  requestAnimationFrame(ticker);
+
+  lenis.on('scroll', (e) => {
+    const scrollY = e.animatedScroll;
+    const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+    if(maxScroll <= 0) return;
+    
+    const progress = Math.min(1, scrollY / maxScroll);
+    targetFi = Math.min(TOTAL-1, Math.floor(progress * TOTAL));
 
     bar.style.width = (progress*100)+'%';
-
     if(progress > 0.02) hint.classList.add('hide');
     else hint.classList.remove('hide');
+  });
 
-    ticking = false;
-  }
-
-  window.addEventListener('scroll', function(){
-    if(!ticking){
-      ticking = true;
-      requestAnimationFrame(update);
-    }
-  }, {passive:true});
-
-  // Initial draw once first frame loads
+  // Initial load
   const firstImg = new Image();
   firstImg.src = srcs[0];
   firstImg.onload = () => {
