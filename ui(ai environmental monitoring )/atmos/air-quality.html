@@ -71,6 +71,36 @@
 .toast-title { font-family:var(--font-display); font-weight:800; color:var(--navy); font-size:0.95rem; }
 .toast-msg { color:var(--muted); font-size:0.8rem; }
 
+/* ── SAMPLE PREVIEW ── */
+.sample-preview-card {
+  display:none; background:rgba(255,255,255,0.7); backdrop-filter:blur(24px);
+  border:1px solid rgba(91,184,245,0.15); border-radius:24px;
+  padding:20px; margin-bottom:24px; animation:scaleUp 0.5s cubic-bezier(0.17, 0.84, 0.44, 1);
+}
+.sample-preview-card.show { display:block; }
+.sample-meta { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+.sample-label {
+  background:var(--cyan-deep); color:#fff; font-family:var(--font-mono);
+  font-size:0.65rem; padding:4px 10px; border-radius:6px; letter-spacing:0.05em;
+}
+.sample-img-wrap {
+  width:100%; max-height:300px; border-radius:14px; overflow:hidden;
+  border:1px solid rgba(0,0,0,0.05); position:relative;
+}
+#activeSampleImg { width:100%; height:100%; object-fit:contain; display:block; background:#f0f4f8; }
+
+.btn-retake {
+  background:none; border:1px solid rgba(91,184,245,0.3); color:var(--cyan-deep);
+  font-family:var(--font-display); font-weight:600; font-size:0.75rem;
+  padding:6px 14px; border-radius:10px; cursor:pointer; transition:all 0.2s;
+}
+.btn-retake:hover { background:rgba(91,184,245,0.1); border-color:var(--cyan-deep); }
+
+@keyframes scaleUp {
+  from { opacity:0; transform:scale(0.95); }
+  to { opacity:1; transform:scale(1); }
+}
+
 .mindpal-container {
   background:rgba(255,255,255,0.6); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
   border:1px solid rgba(91,184,245,0.12); border-radius:24px;
@@ -122,6 +152,20 @@
       <span style="font-size:1.2rem;">📸</span>
       Capture Environmental Sample
     </button>
+  </div>
+
+  <!-- Active Sample Preview -->
+  <div class="sample-preview-card" id="samplePreview">
+    <div class="sample-meta">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="sample-label">ACTIVE SAMPLE</span>
+        <span id="sampleTimestamp" style="font-family:var(--font-mono); font-size:0.7rem; color:var(--muted);"></span>
+      </div>
+      <button class="btn-retake" onclick="openCamera()">Retake</button>
+    </div>
+    <div class="sample-img-wrap">
+      <img id="activeSampleImg" src="" alt="Active Sample"/>
+    </div>
   </div>
 
   <div class="mindpal-container reveal d3">
@@ -212,6 +256,16 @@ function takeSnapshot() {
   ctx.drawImage(video, 0, 0);
   
   const data = canvas.toDataURL('image/jpeg', 0.9);
+  
+  // Show in preview card
+  const preview = document.getElementById('samplePreview');
+  const previewImg = document.getElementById('activeSampleImg');
+  const timestamp = document.getElementById('sampleTimestamp');
+  
+  previewImg.src = data;
+  timestamp.textContent = new Date().toLocaleTimeString();
+  preview.classList.add('show');
+
   const link = document.createElement('a');
   link.href = data;
   link.download = `atmos-sample-${Date.now()}.jpg`;
