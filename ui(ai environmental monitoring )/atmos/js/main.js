@@ -122,7 +122,7 @@ const observer = new IntersectionObserver(entries => {
     }
   });
 }, { threshold: 0.1 });
-document.querySelectorAll('.reveal,.reveal-left,.alert-card').forEach(el => observer.observe(el));
+document.querySelectorAll('.reveal, .reveal-left, .reveal-group, .alert-card').forEach(el => observer.observe(el));
 
 // Alerts stagger
 const alertObserver = new IntersectionObserver(entries => {
@@ -175,16 +175,37 @@ function formatNum(n, format) {
 let navOpen = false;
 function toggleMobileNav() {
   navOpen = !navOpen;
-  document.getElementById('mobileNav').classList.toggle('open', navOpen);
-  document.getElementById('hamburger').classList.toggle('active', navOpen);
+  const mobileNav = document.getElementById('mobileNav');
+  mobileNav.classList.toggle('open', navOpen);
   document.body.style.overflow = navOpen ? 'hidden' : '';
+  
+  // Stagger links
+  const links = mobileNav.querySelectorAll('a');
+  if (navOpen) {
+    links.forEach((link, idx) => {
+      link.style.transitionDelay = (0.2 + idx * 0.08) + 's';
+    });
+  } else {
+    links.forEach(link => link.style.transitionDelay = '0s');
+  }
+
+  const spans = document.querySelectorAll('#hamburger span');
+  if (navOpen) {
+    spans[0].style.transform = 'rotate(45deg) translate(5px,5px)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'rotate(-45deg) translate(5px,-5px)';
+  } else {
+    spans.forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
+  }
 }
 
 function closeMobileNav() {
   navOpen = false;
-  document.getElementById('mobileNav').classList.remove('open');
-  document.getElementById('hamburger').classList.remove('active');
+  const mobileNav = document.getElementById('mobileNav');
+  mobileNav.classList.remove('open');
   document.body.style.overflow = '';
+  mobileNav.querySelectorAll('a').forEach(l => l.style.transitionDelay = '0s');
+  document.querySelectorAll('#hamburger span').forEach(s => { s.style.transform = ''; s.style.opacity = ''; });
 }
 
 // ── MOBILE BOTTOM NAV BAR (auto-injected) ──

@@ -119,6 +119,9 @@ body::before { display:none !important; }
 /* Marquee + footer sit on top of sequence */
 .marquee-section, footer { position:relative; z-index:10; }
 
+/* Ensure Nav and mission elements are top-most */
+nav, .modal-overlay { z-index: 9999 !important; }
+
 @media(max-width:768px){
   .seq-panel { max-width:90%; padding:20px; }
   .seq-title { font-size:clamp(1.4rem,6vw,2rem); }

@@ -1,75 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ATMOS — Deforestation Alerts</title>
-<meta name="description" content="AI-powered deforestation monitoring and alerts based on multi-spectral satellite imagery."/>
-<link rel="stylesheet" href="css/style.css"/>
-<style>
-.forecast-page { padding:120px 24px 80px; max-width:1100px; margin:0 auto; position:relative; z-index:2; }
-.mindpal-container { 
-  background:rgba(255,255,255,0.7); backdrop-filter:blur(24px); -webkit-backdrop-filter:blur(24px);
-  border:1px solid rgba(91,184,245,0.2); 
-  border-radius:24px; 
-  padding:16px; 
-  box-shadow:0 8px 32px rgba(0,0,0,0.05);
-  margin-top: 40px;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ATMOS — Deforestation Alerts</title>
+  <meta name="description"
+    content="AI-powered deforestation monitoring and alerts based on multi-spectral satellite imagery." />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .forecast-page {
+      padding: 120px 24px 80px;
+      max-width: 1100px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    .mindpal-container {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(91, 184, 245, 0.2);
+      border-radius: 24px;
+      padding: 16px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05);
+      margin-top: 40px;
+    }
+  </style>
 </head>
+
 <body>
-<canvas id="particles-canvas"></canvas>
-<div class="orb-container"><div class="orb orb-1" id="orb1"></div><div class="orb orb-2" id="orb2"></div><div class="orb orb-3" id="orb3"></div><div class="orb orb-4" id="orb4"></div></div>
-<div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html" onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html" onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
-<nav id="mainNav">
-  <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
-  <ul class="nav-links">
-    <li><a href="features.html" class="active">Features</a></li>
-    <li><a href="dashboard.html">Dashboard</a></li>
-    <li><a href="solutions.html">Solutions</a></li>
-    <li><a href="alerts.html">Alerts</a></li>
-    <li><a href="how.html">How It Works</a></li>
-  </ul>
-  <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
-    <div class="toggle-orb"></div>
+  <canvas id="particles-canvas"></canvas>
+  <div class="orb-container">
+    <div class="orb orb-1" id="orb1"></div>
+    <div class="orb orb-2" id="orb2"></div>
+    <div class="orb orb-3" id="orb3"></div>
+    <div class="orb orb-4" id="orb4"></div>
   </div>
-  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
-  <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
-</nav>
+  <div class="mobile-nav" id="mobileNav"><a href="index.html" onclick="closeMobileNav()">Home</a><a href="features.html"
+      onclick="closeMobileNav()">Features</a><a href="dashboard.html" onclick="closeMobileNav()">Dashboard</a><a
+      href="solutions.html" onclick="closeMobileNav()">Solutions</a><a href="alerts.html"
+      onclick="closeMobileNav()">Alerts</a><a href="how.html" onclick="closeMobileNav()">How It Works</a></div>
+  <nav id="mainNav">
+    <a href="index.html" class="nav-logo">ATM<span class="dot">O</span>S</a>
+    <ul class="nav-links">
+      <li><a href="features.html" class="active">Features</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="solutions.html">Solutions</a></li>
+      <li><a href="alerts.html">Alerts</a></li>
+      <li><a href="how.html">How It Works</a></li>
+    </ul>
+    <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
+      <div class="toggle-orb"></div>
+    </div>
+    <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+    <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()"
+      aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
 
-<a href="features.html" class="back-btn">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-  Back to Features
-</a>
+  <a href="features.html" class="back-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"
+      stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6" />
+    </svg>
+    Back to Features
+  </a>
 
-<div class="forecast-page">
-  <div style="text-align:center;">
-    <div class="section-label reveal" style="justify-content:center;">🌲 DEFORESTATION ALERTS</div>
-    <h1 class="section-title reveal d1">Monitor Canopy Loss<br><span style="color:var(--cyan)">with Satellite AI</span></h1>
-    <p class="section-sub reveal d2" style="margin:0 auto;">Interact with our digital monitoring bot for real-time tracking, area estimation, and illegal logging pattern recognition.</p>
+  <div class="forecast-page">
+    <div style="text-align:center;">
+      <div class="section-label reveal" style="justify-content:center;">🌲 DEFORESTATION ALERTS</div>
+      <h1 class="section-title reveal d1">Monitor Canopy Loss<br><span style="color:var(--cyan)">with Satellite
+          AI</span></h1>
+      <p class="section-sub reveal d2" style="margin:0 auto;">Interact with our digital monitoring bot for real-time
+        tracking, area estimation, and illegal logging pattern recognition.</p>
+    </div>
+
+    <div class="mindpal-container reveal d3">
+      <!-- Lazy load logic inside to prevent blocking -->
+      <iframe
+        data-safe-payload="7e2640b1ce2cd07266bdfd14:92c4ee2990c71570f91a3eb36c6d45567aeae20abe51a1e856fb847b26720a36ce81406965c3a50fa862c0162929e100deb3f7d0c4ade83bc186073a08f9f7c416616a41ab09757a1e2c528a7793792d6e56d273c82e7a4d981d841fef0e1a:2dfcc87e86a4864c9c474f58b3e2a278"
+        allow="clipboard-read; clipboard-write; microphone" style="width: 100%; height: 100%; min-height: 700px"
+        loading="lazy"></iframe>
+    </div>
   </div>
 
-  <div class="mindpal-container reveal d3">
-    <!-- Lazy load logic inside to prevent blocking -->
-    <iframe
-      data-safe-payload="7e2640b1ce2cd07266bdfd14:92c4ee2990c71570f91a3eb36c6d45567aeae20abe51a1e856fb847b26720a36ce81406965c3a50fa862c0162929e100deb3f7d0c4ade83bc186073a08f9f7c416616a41ab09757a1e2c528a7793792d6e56d273c82e7a4d981d841fef0e1a:2dfcc87e86a4864c9c474f58b3e2a278"
-      allow="clipboard-read; clipboard-write; microphone"
-      style="width: 100%; height: 100%; min-height: 700px"
-      loading="lazy"
-    ></iframe>
-  </div>
-</div>
-
-<footer>
-  <div class="footer-logo">ATM<span class="dot">O</span>S</div>
-  <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
-  <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a href="how.html">How It Works</a></div>
-  <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span class="footer-tag">Satellite CV</span></div>
-  <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
-  <div class="footer-watermark">ATMOS</div>
-</footer>
-<script src="js/safety.js"></script>
-<script src="js/main.js"></script>
+  <footer>
+    <div class="footer-logo">ATM<span class="dot">O</span>S</div>
+    <p class="footer-sub">AI for a Breathing Planet. Monitor. Predict. Protect.</p>
+    <div class="footer-links"><a href="index.html">Home</a><a href="features.html">Features</a><a
+        href="dashboard.html">Dashboard</a><a href="solutions.html">Solutions</a><a href="alerts.html">Alerts</a><a
+        href="how.html">How It Works</a></div>
+    <div class="footer-tags"><span class="footer-tag">React + Vite</span><span class="footer-tag">Three.js
+        Globe</span><span class="footer-tag">Transformer ML</span><span class="footer-tag">Edge IoT Network</span><span
+        class="footer-tag">Satellite CV</span></div>
+    <p class="footer-copy">© 2025 ATMOS — Built with ❤️ for GreenSoftTech Hackathon</p>
+    <div class="footer-watermark">ATMOS</div>
+  </footer>
+  <script src="js/safety.js"></script>
+  <script src="js/main.js"></script>
 </body>
+
 </html>
