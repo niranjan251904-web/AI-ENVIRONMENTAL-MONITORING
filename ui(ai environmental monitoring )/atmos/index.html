@@ -293,22 +293,50 @@ body::before { display:none !important; }
 <script src="js/main.js"></script>
 <script>
 (function(){
-  const TOTAL = 80;
+  // Use every 2nd frame = 40 images instead of 80 (~1.7MB vs ~3.5MB)
+  const STEP = 2;
+  const TOTAL_ORIGINAL = 80;
   const FOLDER = 'hero/frame/ai%20hero%20se3ction/ezgif-frame-';
   const frame = document.getElementById('seqFrame');
   const bar = document.getElementById('seqProgress');
   const hint = document.getElementById('scrollHint');
 
-  // Build src array
+  // Build optimized src array (every 2nd frame)
   const srcs = [];
-  for(let i=0;i<TOTAL;i++){
-    srcs[i] = FOLDER + String(i+1).padStart(3,'0') + '.jpg';
+  for(let i = 0; i < TOTAL_ORIGINAL; i += STEP){
+    srcs.push(FOLDER + String(i+1).padStart(3,'0') + '.jpg');
   }
+  const TOTAL = srcs.length; // 40 frames
 
-  // Preload all frames
-  for(let i=0;i<TOTAL;i++){
+  // In-memory image cache — prevents re-downloading
+  const cache = new Array(TOTAL);
+
+  // Phase 1: Load first 5 frames IMMEDIATELY (hero visible area)
+  const PRIORITY_COUNT = 5;
+  for(let i = 0; i < PRIORITY_COUNT && i < TOTAL; i++){
     const img = new Image();
     img.src = srcs[i];
+    cache[i] = img;
+  }
+
+  // Phase 2: Load the rest in small batches (non-blocking)
+  let loadIndex = PRIORITY_COUNT;
+  function loadBatch(){
+    const BATCH = 6;
+    for(let b = 0; b < BATCH && loadIndex < TOTAL; b++, loadIndex++){
+      const img = new Image();
+      img.src = srcs[loadIndex];
+      cache[loadIndex] = img;
+    }
+    if(loadIndex < TOTAL){
+      setTimeout(loadBatch, 150); // Small delay between batches
+    }
+  }
+  // Start lazy batch loading after first paint
+  if('requestIdleCallback' in window){
+    requestIdleCallback(loadBatch);
+  } else {
+    setTimeout(loadBatch, 200);
   }
 
   // Panel visibility via IntersectionObserver
@@ -321,8 +349,10 @@ body::before { display:none !important; }
   }, { threshold:0.3 });
   panels.forEach(p=>observer.observe(p));
 
-  // Scroll handler — map entire page scroll to 80 frames
+  // Scroll handler — throttled with rAF
   let lastFi = -1;
+  let ticking = false;
+
   function update(){
     const scrollY = window.scrollY;
     const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
@@ -332,16 +362,29 @@ body::before { display:none !important; }
 
     if(fi !== lastFi){
       lastFi = fi;
-      frame.src = srcs[fi];
+      // Use cached image if ready, else set src directly
+      if(cache[fi] && cache[fi].complete){
+        frame.src = cache[fi].src;
+      } else {
+        frame.src = srcs[fi];
+      }
     }
 
     bar.style.width = (progress*100)+'%';
 
     if(progress > 0.02) hint.classList.add('hide');
     else hint.classList.remove('hide');
+
+    ticking = false;
   }
 
-  window.addEventListener('scroll', update, {passive:true});
+  window.addEventListener('scroll', function(){
+    if(!ticking){
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  }, {passive:true});
+
   update();
 })();
 </script>
