@@ -23,7 +23,7 @@
   <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle Theme">
     <div class="toggle-orb"></div>
   </div>
-  <a href="dashboard.html" class="nav-cta">Join the Mission</a>
+  <a href="javascript:void(0)" onclick="openMissionModal()" class="nav-cta">Join the Mission</a>
   <button class="nav-hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu"><span></span><span></span><span></span></button>
 </nav>
 
@@ -101,5 +101,35 @@
   <div class="footer-watermark">ATMOS</div>
 </footer>
 <script src="js/main.js"></script>
+<!-- Mission Enrollment Modal -->
+<div class="modal-overlay" id="missionOverlay" onclick="if(event.target===this) closeMissionModal()">
+  <div class="mission-modal">
+    <button class="modal-close" onclick="closeMissionModal()">✕</button>
+    <div id="enrollForm">
+      <div class="enroll-header">
+        <div class="enroll-icon">🌱</div>
+        <h2 style="font-family:var(--font-display); font-weight:900; color:var(--navy); margin-bottom:8px;">Join the Mission</h2>
+        <p style="color:var(--muted); font-size:0.9rem;">Commit to a breathing planet. Enroll in the global stewardship network.</p>
+      </div>
+      <form class="enroll-form" onsubmit="handleSubmitMission(event)">
+        <input type="text" id="enrollName" class="enroll-input" placeholder="Your Full Name" required />
+        <input type="email" id="enrollEmail" class="enroll-input" placeholder="Your Security Email" required />
+        <button type="submit" class="btn-enroll">Establish Security Connection</button>
+      </form>
+    </div>
+    <div id="enrollSuccess" class="enroll-success">
+      <div class="enroll-header">
+        <div class="enroll-icon">✅</div>
+        <h2 style="font-family:var(--font-display); font-weight:900; color:var(--navy); margin-bottom:8px;">Identity Established</h2>
+        <p style="color:var(--muted); font-size:0.9rem;">Your secure stewardship identity has been generated successfully.</p>
+      </div>
+      <div class="mission-id-card">
+        <div class="mission-id-label">PLANET STEWARDSHIP ID</div>
+        <div class="mission-id-value" id="missionIDValue">ATMOS-4X7K2P9Q</div>
+      </div>
+      <button class="btn-enroll" onclick="closeMissionModal()" style="width:100%;">Access Mission Protocols</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

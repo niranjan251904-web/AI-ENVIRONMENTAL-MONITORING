@@ -257,3 +257,48 @@ initTheme();
 
 // Global handle for the toggle button (since it's added via HTML)
 window.toggleTheme = toggleTheme;
+
+// ── MISSION ENROLLMENT LOGIC ──
+function openMissionModal() {
+  const overlay = document.getElementById('missionOverlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+}
+
+function closeMissionModal() {
+  const overlay = document.getElementById('missionOverlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+    // Reset form after close animation
+    setTimeout(() => {
+      document.getElementById('enrollForm').style.display = 'flex';
+      document.getElementById('enrollSuccess').style.display = 'none';
+      document.getElementById('enrollName').value = '';
+      document.getElementById('enrollEmail').value = '';
+    }, 400);
+  }
+}
+
+function handleSubmitMission(e) {
+  e.preventDefault();
+  const name = document.getElementById('enrollName').value;
+  if (!name) return;
+
+  const missionID = 'ATMOS-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+  
+  document.getElementById('missionIDValue').textContent = missionID;
+  const enrollForm = document.getElementById('enrollForm');
+  const enrollSuccess = document.getElementById('enrollSuccess');
+  
+  if (enrollForm && enrollSuccess) {
+    enrollForm.style.display = 'none';
+    enrollSuccess.style.display = 'block';
+  }
+}
+
+window.openMissionModal = openMissionModal;
+window.closeMissionModal = closeMissionModal;
+window.handleSubmitMission = handleSubmitMission;
