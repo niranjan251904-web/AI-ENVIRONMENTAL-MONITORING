@@ -15,7 +15,7 @@
   --surface: #EAF4FB;
   --surface-deep: #D6EDF8;
   --red: #E53E5C;
-  --yellow: #D4A017;
+  --yellow: #F4D03F;
   --green: #22A06B;
   --bg: #FFFFFF;
   --bg2: #F5FAFD;
@@ -29,6 +29,22 @@
   --font-display: 'Inter', sans-serif;
   --font-body: 'DM Sans', 'Inter', sans-serif;
   --font-mono: 'Space Mono', monospace;
+  --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body.dark-theme {
+  --bg: #050A0F;
+  --bg2: #0A141D;
+  --surface: #0E1A27;
+  --surface-deep: #081018;
+  --glass: rgba(15, 30, 45, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-hover: rgba(20, 40, 60, 0.8);
+  --text: #FFFFFF;
+  --muted: rgba(255, 255, 255, 0.55);
+  --navy: #F5FAFD;
+  --fog: #1A2E3D;
+  --cyan-glow: rgba(91,184,245,0.3);
 }
 
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
@@ -41,9 +57,16 @@ body {
   overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   background-image:
-    radial-gradient(ellipse at 20% 0%, rgba(214,237,248,0.5) 0%, transparent 60%),
-    radial-gradient(ellipse at 80% 100%, rgba(168,223,255,0.25) 0%, transparent 50%);
+    radial-gradient(ellipse at 20% 0%, rgba(91,184,245,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(168,223,255,0.12) 0%, transparent 50%);
   background-attachment: fixed;
+  transition: background var(--transition), color var(--transition);
+}
+
+body.dark-theme {
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(26,126,200,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(13,27,42,0.4) 0%, transparent 50%);
 }
 
 /* ── SCROLLBAR ── */
@@ -114,6 +137,63 @@ nav.scrolled { background:rgba(255,255,255,0.85); box-shadow:0 4px 32px rgba(91,
 .nav-cta:hover { box-shadow:0 6px 30px rgba(91,184,245,0.4); transform:translateY(-1px); }
 .nav-hamburger { display:none; flex-direction:column; gap:5px; cursor:pointer; background:none; border:none; }
 .nav-hamburger span { width:22px; height:2px; background:var(--navy); border-radius:1px; transition:all 0.3s; display:block; }
+
+/* ── ORBITAL THEME TOGGLE ── */
+.theme-toggle {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  background: var(--surface-deep);
+  border: 1px solid var(--glass-border);
+  border-radius: 100px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  transition: var(--transition);
+  margin-left: 10px;
+}
+.theme-toggle:hover { border-color: var(--cyan); box-shadow: 0 0 10px var(--cyan-glow); }
+
+.toggle-orb {
+  width: 20px;
+  height: 20px;
+  background: var(--yellow);
+  border-radius: 50%;
+  position: relative;
+  transition: var(--transition);
+  box-shadow: 0 0 12px var(--yellow);
+  transform: translateX(0);
+}
+
+/* Day -> Sun Rays */
+.toggle-orb::after {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  border: 2px dotted var(--yellow);
+  animation: rotateSun 10s linear infinite;
+  opacity: 0.6;
+}
+@keyframes rotateSun { to { transform: rotate(360deg); } }
+
+/* Night Mode Overrides */
+.dark-theme .theme-toggle { background: #081018; }
+.dark-theme .toggle-orb {
+  background: #EAF4FB;
+  transform: translateX(24px);
+  box-shadow: 0 0 15px rgba(168, 223, 255, 0.4);
+}
+.dark-theme .toggle-orb::after {
+  border: none;
+  background: #081018; /* Moon Crater Simulation */
+  inset: 2px -4px auto auto;
+  width: 14px;
+  height: 14px;
+  animation: none;
+  opacity: 1;
+}
 
 /* ── SECTIONS ── */
 section { position:relative; z-index:2; }

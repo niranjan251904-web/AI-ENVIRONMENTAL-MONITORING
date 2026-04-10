@@ -227,12 +227,26 @@ document.querySelectorAll('.summary-bar').forEach(el => sumObs.observe(el));
 // ── SIMULATED LIVE AQI UPDATE ──
 const aqiValues = document.querySelectorAll('.aqi-value');
 if (aqiValues.length) {
-  setInterval(() => {
-    aqiValues.forEach(el => {
-      const current = parseInt(el.textContent.replace(/[^0-9]/g, ''));
-      const drift = Math.floor(Math.random() * 7) - 3;
-      const updated = Math.max(20, current + drift);
-      el.textContent = 'AQI ' + updated;
-    });
   }, 4000);
 }
+
+// ── THEME ENGINE (DAY/NIGHT) ──
+function initTheme() {
+  const savedTheme = localStorage.getItem('atmos-theme');
+  const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  
+  if (savedTheme === 'dark' || (!savedTheme && systemDark)) {
+    document.body.classList.add('dark-theme');
+  }
+}
+
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-theme');
+  localStorage.setItem('atmos-theme', isDark ? 'dark' : 'light');
+}
+
+// Initialize on script load
+initTheme();
+
+// Global handle for the toggle button (since it's added via HTML)
+window.toggleTheme = toggleTheme;
